@@ -1,22 +1,32 @@
 package main
 
 import (
-	"github.com/GoogleCloudPlatform/functions-framework-go/funcframework"
-	"github.com/polymorph-metadata/handlers"
-	log "github.com/sirupsen/logrus"
+	"github.com/joho/godotenv"
+	"github.com/polymorph-metadata/app/interface/api"
+	"github.com/polymorph-metadata/app/interface/api/routers"
 	"os"
 )
 
 func main() {
-	funcframework.RegisterHTTPFunction("/token", handlers.TokenMetadata)
-
-	// Use PORT environment variable, or default to 8080.
-	port := "9090"
-	if envPort := os.Getenv("PORT"); envPort != "" {
-		port = envPort
+	args := os.Args[1:]
+	if len(args) > 0 {
+		godotenv.Load(args[0])
+	} else {
+		godotenv.Load()
 	}
 
-	if err := funcframework.Start(port); err != nil {
-		log.Fatalf("funcframework.Start: %v\n", err)
-	}
+	setupLogger()
+
+	ethClient := connectToEthereum()
+
+	apiPort := os.Getenv("API_PORT")
+	a := api.NewAPI()
+
+	nodeURL := os.Getenv("CONTRACT_ADDRESS")
+
+	metadataRouter := routers.NewMetadataRouter(ethClient, nodeURL)
+
+	a.AddRouter("/token", metadataRouter)
+
+	a.Start(apiPort)
 }
