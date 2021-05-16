@@ -8,12 +8,14 @@ import (
 
 const POLYMORPH_IMAGE_URL string = "https://storage.googleapis.com/polymorph-images/"
 const EXTERNAL_URL string = "https://kek.dao/"
-const BASE_GENES_COUNT int = 6
+const GENES_COUNT = 7
+const BASE_GENES_COUNT int = 12
 const HEAD_GENES_COUNT int = 6
 const ARMOR_GENES_COUNT int = 7
 const PANTS_GENES_COUNT int = 7
 const SHOES_GENES_COUNT int = 4
-const WEAPON_GENES_COUNT int = 4
+const WEAPON_GENES_COUNT int = 5
+const FACE_GENES_COUNT int = 3
 
 type Genome string
 
@@ -27,6 +29,10 @@ func getGene(g string, start, end, count int) string {
 	}
 
 	return geneStr
+}
+
+func getFaceGene(g string) string {
+	return getGene(g, -14, -12, FACE_GENES_COUNT)
 }
 
 func getWeaponGene(g string) string {
@@ -54,9 +60,10 @@ func getBaseGene(g string) string {
 }
 
 func (g *Genome) genes() []string {
-	res := make([]string, 0, 6)
+	res := make([]string, 0, GENES_COUNT)
 	gStr := string(*g)
 
+	res = append(res, getFaceGene(gStr))
 	res = append(res, getWeaponGene(gStr))
 	res = append(res, getShoesGene(gStr))
 	res = append(res, getPantsGene(gStr))
