@@ -1,2 +1,3 @@
 credentials.json
-.env.yaml
+.env
+.DS_Store
