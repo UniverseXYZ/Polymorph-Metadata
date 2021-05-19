@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"strconv"
 	"strings"
 )
@@ -10,12 +11,12 @@ const POLYMORPH_IMAGE_URL string = "https://storage.googleapis.com/polymorph-ima
 const EXTERNAL_URL string = "https://kek.dao/"
 const GENES_COUNT = 7
 const BASE_GENES_COUNT int = 12
-const HEAD_GENES_COUNT int = 6
-const ARMOR_GENES_COUNT int = 7
-const PANTS_GENES_COUNT int = 7
-const SHOES_GENES_COUNT int = 4
-const WEAPON_GENES_COUNT int = 5
-const FACE_GENES_COUNT int = 3
+const HEAD_GENES_COUNT int = 10
+const ARMOR_GENES_COUNT int = 10
+const PANTS_GENES_COUNT int = 10
+const SHOES_GENES_COUNT int = 8
+const WEAPON_GENES_COUNT int = 9
+const FACE_GENES_COUNT int = 5
 
 type Genome string
 
@@ -25,10 +26,10 @@ func getGene(g string, start, end, count int) string {
 	gene, _ := strconv.Atoi(geneStr)
 	gene = gene % count
 	if gene < 10 {
-		geneStr = fmt.Sprintf("0%s", strconv.Itoa(gene))
+		return fmt.Sprintf("0%s", strconv.Itoa(gene))
 	}
 
-	return geneStr
+	return strconv.Itoa(gene)
 }
 
 func getFaceGene(g string) string {
@@ -63,6 +64,8 @@ func (g *Genome) genes() []string {
 	res := make([]string, 0, GENES_COUNT)
 	gStr := string(*g)
 
+	log.Println(getBaseGene(gStr))
+
 	res = append(res, getFaceGene(gStr))
 	res = append(res, getWeaponGene(gStr))
 	res = append(res, getShoesGene(gStr))
@@ -77,6 +80,8 @@ func (g *Genome) genes() []string {
 func (g *Genome) Metadata(tokenId string) Metadata {
 	var m Metadata
 	genes := g.genes()
+
+	log.Println(genes)
 
 	m.Name = fmt.Sprintf("Polymorph with Id %v", tokenId)
 	m.Description = fmt.Sprintf("Polymorph with Id %v and Genome %v", tokenId, string(*g))
