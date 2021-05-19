@@ -64,8 +64,6 @@ func (g *Genome) genes() []string {
 	res := make([]string, 0, GENES_COUNT)
 	gStr := string(*g)
 
-	log.Println(getBaseGene(gStr))
-
 	res = append(res, getFaceGene(gStr))
 	res = append(res, getWeaponGene(gStr))
 	res = append(res, getShoesGene(gStr))
@@ -80,8 +78,6 @@ func (g *Genome) genes() []string {
 func (g *Genome) Metadata(tokenId string) Metadata {
 	var m Metadata
 	genes := g.genes()
-
-	log.Println(genes)
 
 	m.Name = fmt.Sprintf("Polymorph with Id %v", tokenId)
 	m.Description = fmt.Sprintf("Polymorph with Id %v and Genome %v", tokenId, string(*g))
