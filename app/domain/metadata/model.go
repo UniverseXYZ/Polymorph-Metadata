@@ -2,7 +2,6 @@ package metadata
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"strconv"
 	"strings"
 )
