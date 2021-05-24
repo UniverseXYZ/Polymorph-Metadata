@@ -8,7 +8,8 @@ import (
 
 const POLYMORPH_IMAGE_URL string = "https://storage.googleapis.com/polymorph-images/"
 const EXTERNAL_URL string = "https://kek.dao/"
-const GENES_COUNT = 7
+const GENES_COUNT = 9
+const BACKGROUND_GENE_COUNT int = 2
 const BASE_GENES_COUNT int = 12
 const HEAD_GENES_COUNT int = 10
 const ARMOR_GENES_COUNT int = 10
@@ -18,17 +19,44 @@ const WEAPON_GENES_COUNT int = 9
 const FACE_GENES_COUNT int = 5
 
 type Genome string
+type Gene int
 
-func getGene(g string, start, end, count int) string {
+func (g Gene) toPath() string {
+	if g < 10 {
+		return fmt.Sprintf("0%s", strconv.Itoa(int(g)))
+	}
+
+	return strconv.Itoa(int(g))
+}
+
+func getGeneInt(g string, start, end, count int) int {
 	genomeLen := len(g)
 	geneStr := g[genomeLen+start : genomeLen+end]
 	gene, _ := strconv.Atoi(geneStr)
-	gene = gene % count
-	if gene < 10 {
-		return fmt.Sprintf("0%s", strconv.Itoa(gene))
+	return gene % count
+}
+
+func getGene(g string, start, end, count int) string {
+	gene := getGeneInt(g, start, end, count)
+	return Gene(gene).toPath()
+}
+
+func getBackgroundGene(g string) string {
+	return getGene(g, -18, -16, BACKGROUND_GENE_COUNT)
+}
+
+func getTattooGene(g string) string {
+	gene := getGeneInt(g, -16, -14, 2)
+	if gene == 0 { // No tattoo
+		return "00"
 	}
 
-	return strconv.Itoa(gene)
+	// Tattoo based on the base
+	baseGene := getGeneInt(g, -2, 0, BASE_GENES_COUNT)
+	
+	baseGene++
+
+	return Gene(baseGene).toPath()
 }
 
 func getFaceGene(g string) string {
@@ -69,7 +97,9 @@ func (g *Genome) genes() []string {
 	res = append(res, getPantsGene(gStr))
 	res = append(res, getArmorGene(gStr))
 	res = append(res, getHeadGene(gStr))
+	res = append(res, getTattooGene(gStr))
 	res = append(res, getBaseGene(gStr))
+	res = append(res, getBackgroundGene(gStr))
 
 	return res
 }
