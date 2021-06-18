@@ -12,3 +12,17 @@ Each gene is 2 numbers read from right to left. Interpret follows:
 - Gene 7 [12:14] - head attribute
 - Gene 8 [14:16] - right weapon attribute
 - Gene 9 [16:18] - left weapon attribute
+
+## Genes and their variations
+```
+const GENES_COUNT = 9
+const BACKGROUND_GENE_COUNT int = 12
+const BASE_GENES_COUNT int = 11	
+const PANTS_GENES_COUNT int = 24
+const TORSO_GENES_COUNT int = 22
+const SHOES_GENES_COUNT int = 17
+const FACE_GENES_COUNT int = 9
+const HEAD_GENES_COUNT int = 28
+const WEAPON_RIGHT_GENES_COUNT int = 5
+const WEAPON_LEFT_GENES_COUNT int = 17
+```
