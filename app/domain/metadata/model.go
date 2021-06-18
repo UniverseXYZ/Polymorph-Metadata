@@ -7,16 +7,17 @@ import (
 )
 
 const POLYMORPH_IMAGE_URL string = "https://storage.googleapis.com/polymorph-images/"
-const EXTERNAL_URL string = "https://kek.dao/"
+const EXTERNAL_URL string = "https://universe.xyz/polymorphs/"
 const GENES_COUNT = 9
-const BACKGROUND_GENE_COUNT int = 2
+const BACKGROUND_GENE_COUNT int = 12
 const BASE_GENES_COUNT int = 12
-const HEAD_GENES_COUNT int = 10
-const ARMOR_GENES_COUNT int = 10
-const PANTS_GENES_COUNT int = 10
-const SHOES_GENES_COUNT int = 8
-const WEAPON_GENES_COUNT int = 9
-const FACE_GENES_COUNT int = 5
+const PANTS_GENES_COUNT int = 24
+const TORSO_GENES_COUNT int = 22
+const SHOES_GENES_COUNT int = 17
+const FACE_GENES_COUNT int = 9
+const HEAD_GENES_COUNT int = 28
+const WEAPON_RIGHT_GENES_COUNT int = 5
+const WEAPON_LEFT_GENES_COUNT int = 17
 
 type Genome string
 type Gene int
@@ -41,46 +42,36 @@ func getGene(g string, start, end, count int) string {
 	return Gene(gene).toPath()
 }
 
-func getBackgroundGene(g string) string {
-	return getGene(g, -18, -16, BACKGROUND_GENE_COUNT)
+func getWeaponLeftGene(g string) string {
+	return getGene(g, -18, -16, WEAPON_LEFT_GENES_COUNT)
 }
 
-func getTattooGene(g string) string {
-	gene := getGeneInt(g, -16, -14, 2)
-	if gene == 0 { // No tattoo
-		return "00"
-	}
+func getWeaponRightGene(g string) string {
+	return getGene(g, -16, -14, WEAPON_RIGHT_GENES_COUNT)
+}
 
-	// Tattoo based on the base
-	baseGene := getGeneInt(g, -2, 0, BASE_GENES_COUNT)
-	
-	baseGene++
-
-	return Gene(baseGene).toPath()
+func getHeadGene(g string) string {
+	return getGene(g, -14, -12, HEAD_GENES_COUNT)
 }
 
 func getFaceGene(g string) string {
-	return getGene(g, -14, -12, FACE_GENES_COUNT)
-}
-
-func getWeaponGene(g string) string {
-	return getGene(g, -12, -10, WEAPON_GENES_COUNT)
+	return getGene(g, -12, -10, FACE_GENES_COUNT)
 }
 
 func getShoesGene(g string) string {
 	return getGene(g, -10, -8, SHOES_GENES_COUNT)
 }
 
+func getTorsoGene(g string) string {
+	return getGene(g, -8, -6, TORSO_GENES_COUNT)
+}
+
 func getPantsGene(g string) string {
-	return getGene(g, -8, -6, PANTS_GENES_COUNT)
+	return getGene(g, -6, -4, PANTS_GENES_COUNT)
 }
 
-func getArmorGene(g string) string {
-	return getGene(g, -6, -4, ARMOR_GENES_COUNT)
-}
-
-func getHeadGene(g string) string {
-	return getGene(g, -4, -2, HEAD_GENES_COUNT)
+func getBackgroundGene(g string) string {
+	return getGene(g, -4, -2, BACKGROUND_GENE_COUNT)
 }
 
 func getBaseGene(g string) string {
@@ -91,13 +82,13 @@ func (g *Genome) genes() []string {
 	res := make([]string, 0, GENES_COUNT)
 	gStr := string(*g)
 
-	res = append(res, getFaceGene(gStr))
-	res = append(res, getWeaponGene(gStr))
-	res = append(res, getShoesGene(gStr))
-	res = append(res, getPantsGene(gStr))
-	res = append(res, getArmorGene(gStr))
+	res = append(res, getWeaponLeftGene(gStr))
+	res = append(res, getWeaponRightGene(gStr))
 	res = append(res, getHeadGene(gStr))
-	res = append(res, getTattooGene(gStr))
+	res = append(res, getFaceGene(gStr))
+	res = append(res, getTorsoGene(gStr))
+	res = append(res, getPantsGene(gStr))
+	res = append(res, getShoesGene(gStr))
 	res = append(res, getBaseGene(gStr))
 	res = append(res, getBackgroundGene(gStr))
 
@@ -121,7 +112,7 @@ func (g *Genome) Metadata(tokenId string) Metadata {
 		b.WriteString(gene)
 	}
 
-	b.WriteString(".png") // Finish with png extension
+	b.WriteString(".jpg") // Finish with jpg extension
 
 	imageURL := b.String()
 

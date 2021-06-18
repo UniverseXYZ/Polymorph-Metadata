@@ -1,15 +1,16 @@
 package metadata
 
 import (
-	"cloud.google.com/go/storage"
 	"context"
 	"fmt"
-	"github.com/disintegration/imaging"
-	log "github.com/sirupsen/logrus"
 	"image"
 	"image/color"
 	"net/http"
 	"strings"
+
+	"cloud.google.com/go/storage"
+	"github.com/disintegration/imaging"
+	log "github.com/sirupsen/logrus"
 )
 
 const IMG_SIZE = 4000
@@ -61,11 +62,11 @@ func saveToGCloud(i *image.NRGBA, name string) {
 	defer client.Close()
 
 	wc := client.Bucket(GCLOUD_BUCKET_NAME).Object(name).NewWriter(ctx)
-	f, err := imaging.FormatFromFilename(name)
-	if err != nil {
-		log.Errorf("Format from filename: %v", err)
-	}
-	err = imaging.Encode(wc, i, f, imaging.JPEGQuality(100))
+	// f, err := imaging.FormatFromFilename(name)
+	// if err != nil {
+	// 	log.Errorf("Format from filename: %v", err)
+	// }
+	err = imaging.Encode(wc, i, imaging.JPEG, imaging.JPEGQuality(80))
 
 	if err != nil {
 		log.Errorf("Upload: %v", err)
@@ -94,7 +95,7 @@ func generateAndSaveImage(genes []string) {
 		b.WriteString(gene)
 	}
 
-	b.WriteString(".png") // Finish with png extension
+	b.WriteString(".jpg") // Finish with jpg extension
 
 	saveToGCloud(i, b.String())
 }
