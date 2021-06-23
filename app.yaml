@@ -15,3 +15,5 @@
 runtime: go114
 main: ./cmd
 instance_class: F4_1G
+automatic_scaling:
+  max_concurrent_requests: 40

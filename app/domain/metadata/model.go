@@ -188,6 +188,18 @@ func getBaseGenePath(g string) string {
 	return Gene(gene).toPath()
 }
 
+func (g *Genome) name(configService *config.ConfigService, tokenId string) string {
+	gStr := string(*g)
+	gene := getBaseGene(gStr)
+	return fmt.Sprintf("%v #%v", configService.Character[gene], tokenId)
+}
+
+func (g *Genome) description(configService *config.ConfigService, tokenId string) string {
+	gStr := string(*g)
+	gene := getBaseGene(gStr)
+	return fmt.Sprintf("The %v named %v #%v is a citizen of the Polymorph Universe and has a unique genetic code! You can scramble your Polymorph at anytime.", configService.Type[gene], configService.Character[gene], tokenId)
+}
+
 func (g *Genome) genes() []string {
 	gStr := string(*g)
 
@@ -226,8 +238,8 @@ func (g *Genome) Metadata(tokenId string, configService *config.ConfigService) M
 	genes := g.genes()
 
 	m.Attributes = g.attributes(configService)
-	m.Name = fmt.Sprintf("%v #%v", m.Attributes[0].Value, tokenId)
-	m.Description = fmt.Sprintf("%v #%v and Genome %v", m.Attributes[0].Value, tokenId, string(*g))
+	m.Name = g.name(configService, tokenId)
+	m.Description = g.description(configService, tokenId)
 	m.ExternalUrl = fmt.Sprintf("%s%s", EXTERNAL_URL, tokenId)
 
 	b := strings.Builder{}

@@ -1,16 +1,29 @@
 {
+	"type": [
+		"Wolf",
+		"Crow",
+		"Zombie-alien",
+		"Zombie",
+		"Monkey",
+		"Orc",
+		"Clown",
+		"Iguana",
+		"Alien",
+		"Viking",
+		"Robot"
+	],
 	"character": [
-		"DiamondPaws",
-		"EsCrow",
+		"Diamond Paws",
+		"Escrow",
 		"Frankie",
 		"Glenn",
-		"GoldTooth",
-		"Grishnak",
+		"Goldtooth",
+		"Troll God",
 		"Charles",
 		"Mariguana",
-		"Paul",
+		"Vitalik",
 		"Ragnar",
-		"XYZBot"
+		"X-YZ"
 	],
 	"footwear": [
 		"No shoes",
