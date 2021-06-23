@@ -1,51 +1,38 @@
 package routers
 
 import (
-	"math/big"
+	"log"
 	"net/http"
-	"strconv"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	"github.com/polymorph-metadata/app/config"
-	"github.com/polymorph-metadata/app/contracts"
 	"github.com/polymorph-metadata/app/domain/metadata"
-	"github.com/polymorph-metadata/app/interface/dlt/ethereum"
-	log "github.com/sirupsen/logrus"
+	"github.com/polymorph-metadata/app/interface/api/processor"
 )
 
-func handleMetadataRequest(ethClient *ethereum.EthereumClient, address string, configService *config.ConfigService) func(w http.ResponseWriter, r *http.Request) {
+func handleMetadataRequest(p *processor.Processor) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-
-		instance, err := contracts.NewPolymorph(common.HexToAddress(address), ethClient.Client)
-		if err != nil {
-			render.Status(r, 500)
-			log.Fatal(err)
-		}
 
 		tokenId := chi.URLParam(r, "tokenId")
 
-		iTokenId, err := strconv.Atoi(tokenId)
-		if err != nil {
+		responseC := make(chan *metadata.Metadata)
+		errorC := make(chan error)
+
+		go p.HandleProcessRequest(tokenId, responseC, errorC)
+		select {
+		case m := <-responseC:
+			render.JSON(w, r, m)
+		case err := <-errorC:
 			render.Status(r, 500)
+			render.JSON(w, r, err)
 			log.Fatal(err)
 		}
-
-		genomeInt, err := instance.GeneOf(nil, big.NewInt(int64(iTokenId)))
-		if err != nil {
-			render.Status(r, 500)
-			log.Fatal(err)
-		}
-
-		g := metadata.Genome(genomeInt.String())
-		render.JSON(w, r, (&g).Metadata(tokenId, configService))
 
 	}
 }
 
-func NewMetadataRouter(ethClient *ethereum.EthereumClient, address string, configService *config.ConfigService) http.Handler {
+func NewMetadataRouter(p *processor.Processor) http.Handler {
 	r := chi.NewRouter()
-	r.Get("/{tokenId}", handleMetadataRequest(ethClient, address, configService))
+	r.Get("/{tokenId}", handleMetadataRequest(p))
 	return r
 }

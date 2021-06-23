@@ -14,4 +14,4 @@
 
 runtime: go114
 main: ./cmd
-instance_class: F4
+instance_class: F4_1G
