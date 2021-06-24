@@ -28,6 +28,9 @@ func handleMetadataRequest(p *processor.Processor) func(w http.ResponseWriter, r
 			log.Fatal(err)
 		}
 
+		close(responseC)
+		close(errorC)
+
 	}
 }
 

@@ -4,6 +4,7 @@ import (
 	"log"
 	"math/big"
 	"strconv"
+	"sync"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/polymorph-metadata/app/config"
@@ -22,32 +23,45 @@ type Processor struct {
 	requestChannel chan *ProcessRequest
 	contract       *contracts.Polymorph
 	configService  *config.ConfigService
+	queueLength    int
 }
 
 func (p *Processor) Start() {
 	go p.handle()
 }
 
+func (p *Processor) process(wg *sync.WaitGroup, r *ProcessRequest) {
+	iTokenId, err := strconv.Atoi(r.tokenId)
+	if err != nil {
+		r.errorC <- err
+		return
+	}
+
+	genomeInt, err := p.contract.GeneOf(nil, big.NewInt(int64(iTokenId)))
+	if err != nil {
+		r.errorC <- err
+		return
+	}
+
+	g := metadata.Genome(genomeInt.String())
+	metadata := g.Metadata(r.tokenId, p.configService)
+
+	r.responseC <- &metadata
+
+	wg.Done()
+}
+
 func (p *Processor) handle() {
+	var wg sync.WaitGroup
 	for {
-		r := <-p.requestChannel
-
-		iTokenId, err := strconv.Atoi(r.tokenId)
-		if err != nil {
-			r.errorC <- err
-			return
+		for i := 1; i <= p.queueLength; i++ {
+			r := <-p.requestChannel
+			wg.Add(1)
+			go p.process(&wg, r)
 		}
 
-		genomeInt, err := p.contract.GeneOf(nil, big.NewInt(int64(iTokenId)))
-		if err != nil {
-			r.errorC <- err
-			return
-		}
+		wg.Wait()
 
-		g := metadata.Genome(genomeInt.String())
-		metadata := g.Metadata(r.tokenId, p.configService)
-
-		r.responseC <- &metadata
 	}
 }
 
@@ -70,5 +84,6 @@ func NewProcessor(queue int, ethClient *ethereum.EthereumClient, address string,
 		requestChannel: make(chan *ProcessRequest, queue),
 		contract:       instance,
 		configService:  configService,
+		queueLength:    queue,
 	}
 }

@@ -24,7 +24,10 @@ func main() {
 
 	ethClient := connectToEthereum()
 
-	apiPort := os.Getenv("API_PORT")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = os.Getenv("API_PORT")
+	}
 	queueSize := os.Getenv("QUEUE_SIZE")
 
 	a := api.NewAPI()
@@ -45,5 +48,5 @@ func main() {
 
 	p.Start()
 
-	a.Start(apiPort)
+	a.Start(port)
 }
