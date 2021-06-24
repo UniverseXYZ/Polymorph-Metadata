@@ -14,7 +14,8 @@ import (
 )
 
 const IMG_SIZE = 4000
-const GCLOUD_BUCKET_NAME = "polymorph-images"
+const GCLOUD_UPLOAD_BUCKET_NAME = "polymorph-images"
+const GCLOUD_SOURCE_BUCKET_NAME = "polymorph-source-images"
 
 func imageExists(imageURL string) bool {
 	resp, err := http.Get(imageURL)
@@ -25,16 +26,29 @@ func imageExists(imageURL string) bool {
 	return resp.StatusCode != 404
 }
 
-func combineImages(basePath string, overlayPaths ...string) *image.NRGBA {
-	base, err := imaging.Open(basePath)
+func combineRemoteImages(bucket *storage.BucketHandle, basePath string, overlayPaths ...string) *image.NRGBA {
+
+	ctx := context.Background()
+
+	baseReader, err := bucket.Object(basePath).NewReader(ctx)
 	if err != nil {
 		log.Fatalf("failed to open image: %v", err)
+	}
+	defer baseReader.Close()
+	base, err := imaging.Decode(baseReader)
+	if err != nil {
+		log.Fatalf("failed to decode image: %v", err)
 	}
 	dst := imaging.New(IMG_SIZE, IMG_SIZE, color.NRGBA{0, 0, 0, 0})
 	dst = imaging.Paste(dst, base, image.Pt(0, 0))
 
 	for _, op := range overlayPaths {
-		o, err := imaging.Open(op)
+		r, err := bucket.Object(op).NewReader(ctx)
+		if err != nil {
+			log.Fatalf("failed to open image: %v", err)
+		}
+		defer r.Close()
+		o, err := imaging.Decode(r)
 		if err != nil {
 			log.Fatalf("failed to open image: %v", err)
 		}
@@ -61,18 +75,18 @@ func saveToGCloud(i *image.NRGBA, name string) {
 	}
 	defer client.Close()
 
-	wc := client.Bucket(GCLOUD_BUCKET_NAME).Object(name).NewWriter(ctx)
+	bucket := client.Bucket(GCLOUD_UPLOAD_BUCKET_NAME).Object(name).NewWriter(ctx)
 	// f, err := imaging.FormatFromFilename(name)
 	// if err != nil {
 	// 	log.Errorf("Format from filename: %v", err)
 	// }
-	err = imaging.Encode(wc, i, imaging.JPEG, imaging.JPEGQuality(80))
+	err = imaging.Encode(bucket, i, imaging.JPEG, imaging.JPEGQuality(80))
 
 	if err != nil {
 		log.Errorf("Upload: %v", err)
 	}
 
-	if err = wc.Close(); err != nil {
+	if err = bucket.Close(); err != nil {
 		log.Errorf("Writer.Close: %v", err)
 	}
 
@@ -85,9 +99,20 @@ func generateAndSaveImage(genes []string) {
 	f := make([]string, len(genes))
 
 	for i, gene := range revGenes {
-		f[i] = fmt.Sprintf("./images/%v/%s.png", i, gene)
+		f[i] = fmt.Sprintf("./%v/%s.png", i, gene)
 	}
-	i := combineImages(f[0], f[1:]...)
+
+	ctx := context.Background()
+	client, err := storage.NewClient(ctx)
+
+	if err != nil {
+		log.Errorf("storage.NewClient: %v", err)
+	}
+	defer client.Close()
+
+	bucket := client.Bucket(GCLOUD_SOURCE_BUCKET_NAME)
+
+	i := combineRemoteImages(bucket, f[0], f[1:]...)
 
 	b := strings.Builder{}
 

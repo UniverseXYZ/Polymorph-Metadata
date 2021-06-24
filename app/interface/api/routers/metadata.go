@@ -1,41 +1,57 @@
 package routers
 
 import (
-	"log"
+	"math/big"
 	"net/http"
+	"strconv"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
+	"github.com/polymorph-metadata/app/config"
+	"github.com/polymorph-metadata/app/contracts"
 	"github.com/polymorph-metadata/app/domain/metadata"
-	"github.com/polymorph-metadata/app/interface/api/processor"
+	"github.com/polymorph-metadata/app/interface/dlt/ethereum"
+	log "github.com/sirupsen/logrus"
 )
 
-func handleMetadataRequest(p *processor.Processor) func(w http.ResponseWriter, r *http.Request) {
+func handleMetadataRequest(ethClient *ethereum.EthereumClient, address string, configService *config.ConfigService) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+
+		instance, err := contracts.NewPolymorph(common.HexToAddress(address), ethClient.Client)
+		if err != nil {
+			render.Status(r, 500)
+			render.JSON(w, r, err)
+			log.Errorln(err)
+			return
+		}
 
 		tokenId := chi.URLParam(r, "tokenId")
 
-		responseC := make(chan *metadata.Metadata)
-		errorC := make(chan error)
-
-		go p.HandleProcessRequest(tokenId, responseC, errorC)
-		select {
-		case m := <-responseC:
-			render.JSON(w, r, m)
-		case err := <-errorC:
+		iTokenId, err := strconv.Atoi(tokenId)
+		if err != nil {
 			render.Status(r, 500)
 			render.JSON(w, r, err)
-			log.Fatal(err)
+			log.Errorln(err)
+			return
 		}
 
-		close(responseC)
-		close(errorC)
+		genomeInt, err := instance.GeneOf(nil, big.NewInt(int64(iTokenId)))
+		if err != nil {
+			render.Status(r, 500)
+			render.JSON(w, r, err)
+			log.Errorln(err)
+			return
+		}
+
+		g := metadata.Genome(genomeInt.String())
+		render.JSON(w, r, (&g).Metadata(tokenId, configService))
 
 	}
 }
 
-func NewMetadataRouter(p *processor.Processor) http.Handler {
+func NewMetadataRouter(ethClient *ethereum.EthereumClient, address string, configService *config.ConfigService) http.Handler {
 	r := chi.NewRouter()
-	r.Get("/{tokenId}", handleMetadataRequest(p))
+	r.Get("/{tokenId}", handleMetadataRequest(ethClient, address, configService))
 	return r
 }
