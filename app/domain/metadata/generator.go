@@ -99,7 +99,7 @@ func generateAndSaveImage(genes []string) {
 	f := make([]string, len(genes))
 
 	for i, gene := range revGenes {
-		f[i] = fmt.Sprintf("./%v/%s.png", i, gene)
+		f[i] = fmt.Sprintf("./images/%v/%s.png", i, gene)
 	}
 
 	ctx := context.Background()

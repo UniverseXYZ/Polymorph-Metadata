@@ -20,7 +20,7 @@ type ConfigService struct {
 }
 
 func NewConfigService(configPath string) *ConfigService {
-	jsonFile, err := os.Open("config.json")
+	jsonFile, err := os.Open(configPath)
 	// if we os.Open returns an error then handle it
 	if err != nil {
 		fmt.Println(err)

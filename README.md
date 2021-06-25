@@ -17,12 +17,12 @@ Each gene is 2 numbers read from right to left. Interpret follows:
 ```
 const GENES_COUNT = 9
 const BACKGROUND_GENE_COUNT int = 12
-const BASE_GENES_COUNT int = 11	
-const PANTS_GENES_COUNT int = 24
-const TORSO_GENES_COUNT int = 22
-const SHOES_GENES_COUNT int = 17
-const FACE_GENES_COUNT int = 9
-const HEAD_GENES_COUNT int = 28
-const WEAPON_RIGHT_GENES_COUNT int = 5
-const WEAPON_LEFT_GENES_COUNT int = 17
+const BASE_GENES_COUNT int = 11
+const SHOES_GENES_COUNT int = 25
+const PANTS_GENES_COUNT int = 33
+const TORSO_GENES_COUNT int = 34
+const EYEWEAR_GENES_COUNT int = 13
+const HEAD_GENES_COUNT int = 32
+const WEAPON_RIGHT_GENES_COUNT int = 32
+const WEAPON_LEFT_GENES_COUNT int = 32
 ```

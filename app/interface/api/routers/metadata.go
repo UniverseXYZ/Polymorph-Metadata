@@ -15,7 +15,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func handleMetadataRequest(ethClient *ethereum.EthereumClient, address string, configService *config.ConfigService) func(w http.ResponseWriter, r *http.Request) {
+func HandleMetadataRequest(ethClient *ethereum.EthereumClient, address string, configService *config.ConfigService) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		instance, err := contracts.NewPolymorph(common.HexToAddress(address), ethClient.Client)
@@ -52,6 +52,6 @@ func handleMetadataRequest(ethClient *ethereum.EthereumClient, address string, c
 
 func NewMetadataRouter(ethClient *ethereum.EthereumClient, address string, configService *config.ConfigService) http.Handler {
 	r := chi.NewRouter()
-	r.Get("/{tokenId}", handleMetadataRequest(ethClient, address, configService))
+	r.Get("/{tokenId}", HandleMetadataRequest(ethClient, address, configService))
 	return r
 }

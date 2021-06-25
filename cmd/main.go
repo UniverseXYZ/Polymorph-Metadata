@@ -1,12 +1,13 @@
 package main
 
 import (
+	"log"
 	"os"
 
+	"github.com/GoogleCloudPlatform/functions-framework-go/funcframework"
 	"github.com/joho/godotenv"
 	"github.com/polymorph-metadata/app/config"
-	"github.com/polymorph-metadata/app/interface/api"
-	"github.com/polymorph-metadata/app/interface/api/routers"
+	"github.com/polymorph-metadata/app/interface/api/handlers"
 )
 
 func main() {
@@ -21,19 +22,19 @@ func main() {
 
 	ethClient := connectToEthereum()
 
-	port := os.Getenv("PORT")
-	if port == "" {
+	port := os.Getenv("API_PORT")
+	if envport := os.Getenv("PORT"); envport == "" {
 		port = os.Getenv("API_PORT")
 	}
-	a := api.NewAPI()
 
-	nodeURL := os.Getenv("CONTRACT_ADDRESS")
+	contractAddress := os.Getenv("CONTRACT_ADDRESS")
 
 	configService := config.NewConfigService("./config.json")
 
-	metadataRouter := routers.NewMetadataRouter(ethClient, nodeURL, configService)
+	funcframework.RegisterHTTPFunction("/token", handlers.HandleMetadataRequest(ethClient, contractAddress, configService))
 
-	a.AddRouter("/token", metadataRouter)
+	if err := funcframework.Start(port); err != nil {
+		log.Fatalf("funcframework.Start: %v\n", err)
+	}
 
-	a.Start(port)
 }

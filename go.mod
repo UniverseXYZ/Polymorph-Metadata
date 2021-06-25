@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	cloud.google.com/go/storage v1.15.0
+	github.com/GoogleCloudPlatform/functions-framework-go v1.2.0
 	github.com/aws/aws-sdk-go v1.34.28
 	github.com/disintegration/imaging v1.6.2
 	github.com/ethereum/go-ethereum v1.9.25
