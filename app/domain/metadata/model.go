@@ -50,7 +50,7 @@ func getWeaponLeftGene(g string) int {
 func getWeaponLeftGeneAttribute(g string, configService *config.ConfigService) Attribute {
 	gene := getWeaponLeftGene(g)
 	return Attribute{
-		TraitType: "WeaponLeft",
+		TraitType: "Left Hand",
 		Value:     configService.WeaponLeft[gene],
 	}
 }
@@ -67,7 +67,7 @@ func getWeaponRightGene(g string) int {
 func getWeaponRightGeneAttribute(g string, configService *config.ConfigService) Attribute {
 	gene := getWeaponRightGene(g)
 	return Attribute{
-		TraitType: "WeaponRight",
+		TraitType: "Right Hand",
 		Value:     configService.WeaponRight[gene],
 	}
 }
