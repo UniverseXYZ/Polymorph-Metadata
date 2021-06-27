@@ -163,7 +163,15 @@ func getPantsGenePath(g string) string {
 }
 
 func getBackgroundGene(g string) int {
-	return getGeneInt(g, -2, 0, BASE_GENES_COUNT)
+	return getGeneInt(g, -4, -2, BACKGROUND_GENE_COUNT)
+}
+
+func getBackgroundGeneAttribute(g string, configService *config.ConfigService) Attribute {
+	gene := getBackgroundGene(g)
+	return Attribute{
+		TraitType: "Background",
+		Value:     configService.Background[gene],
+	}
 }
 
 func getBackgroundGenePath(g string) string {
@@ -205,8 +213,8 @@ func (g *Genome) genes() []string {
 
 	res := make([]string, 0, GENES_COUNT)
 
-	res = append(res, getWeaponLeftGenePath(gStr))
 	res = append(res, getWeaponRightGenePath(gStr))
+	res = append(res, getWeaponLeftGenePath(gStr))
 	res = append(res, getHeadGenePath(gStr))
 	res = append(res, getEyewearGenePath(gStr))
 	res = append(res, getTorsoGenePath(gStr))
@@ -230,6 +238,7 @@ func (g *Genome) attributes(configService *config.ConfigService) []Attribute {
 	res = append(res, getHeadGeneAttribute(gStr, configService))
 	res = append(res, getWeaponLeftGeneAttribute(gStr, configService))
 	res = append(res, getWeaponRightGeneAttribute(gStr, configService))
+	res = append(res, getBackgroundGeneAttribute(gStr, configService))
 	return res
 }
 

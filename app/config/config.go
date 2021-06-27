@@ -17,6 +17,7 @@ type ConfigService struct {
 	WeaponRight []string `json:"weaponright"`
 	WeaponLeft  []string `json:"weaponleft"`
 	Type        []string `json:"type"`
+	Background  []string `json:"background"`
 }
 
 func NewConfigService(configPath string) *ConfigService {
