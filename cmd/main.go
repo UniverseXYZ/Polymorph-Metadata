@@ -28,10 +28,11 @@ func main() {
 	}
 
 	contractAddress := os.Getenv("CONTRACT_ADDRESS")
+	rarityEndpoint := os.Getenv("RARITY_ENDPOINT")
 
 	configService := config.NewConfigService("./config.json")
 
-	funcframework.RegisterHTTPFunction("/token", handlers.HandleMetadataRequest(ethClient, contractAddress, configService))
+	funcframework.RegisterHTTPFunction("/token", handlers.HandleMetadataRequest(ethClient, contractAddress, configService, rarityEndpoint))
 
 	if err := funcframework.Start(port); err != nil {
 		log.Fatalf("funcframework.Start: %v\n", err)

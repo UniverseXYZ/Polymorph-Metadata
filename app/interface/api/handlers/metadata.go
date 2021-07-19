@@ -12,9 +12,10 @@ import (
 	"github.com/polymorph-metadata/app/domain/metadata"
 	"github.com/polymorph-metadata/app/interface/dlt/ethereum"
 	log "github.com/sirupsen/logrus"
+	"encoding/json"
 )
 
-func HandleMetadataRequest(ethClient *ethereum.EthereumClient, address string, configService *config.ConfigService) func(w http.ResponseWriter, r *http.Request) {
+func HandleMetadataRequest(ethClient *ethereum.EthereumClient, address string, configService *config.ConfigService, rarityEndpoint string) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		instance, err := contracts.NewPolymorph(common.HexToAddress(address), ethClient.Client)
@@ -43,8 +44,23 @@ func HandleMetadataRequest(ethClient *ethereum.EthereumClient, address string, c
 			return
 		}
 
-		g := metadata.Genome(genomeInt.String())
-		render.JSON(w, r, (&g).Metadata(tokenId, configService))
+		var RARITY_URL string = rarityEndpoint + tokenId
+		resp, err := http.Get(RARITY_URL)
 
+		if err != nil {
+			log.Errorf("GET RARITY ERROR : %v", err)
+		}
+
+		defer resp.Body.Close()
+
+		var rarityResponse metadata.RarityServiceResponse
+
+		if resp.StatusCode == 200 {
+			decoder := json.NewDecoder(resp.Body)
+			decoder.Decode(&rarityResponse)
+		}
+
+		g := metadata.Genome(genomeInt.String())
+		render.JSON(w, r, (&g).Metadata(tokenId, configService, rarityResponse))
 	}
 }

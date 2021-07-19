@@ -4,13 +4,21 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-
 	"github.com/polymorph-metadata/app/config"
 )
+
+type RarityServiceResponse struct {
+	Isvirgin 		bool `json:"isvirgin"`
+	Matchingtraits  []string `json:"matchingtraits"`
+	Colormismatches int `json:"colormismatches"`
+	Rarityscore 	int `json:"rarityscore"`
+	Rank 			int `json:"rank"`
+}
 
 const POLYMORPH_IMAGE_URL string = "https://storage.googleapis.com/polymorph-images/"
 const EXTERNAL_URL string = "https://universe.xyz/polymorphs/"
 const GENES_COUNT = 9
+const RARITY_RESPONSE_COUNT = 5 // Based on the number of items we want to attach to the Attributes array
 const BACKGROUND_GENE_COUNT int = 12
 const BASE_GENES_COUNT int = 11
 const SHOES_GENES_COUNT int = 25
@@ -174,6 +182,42 @@ func getBackgroundGeneAttribute(g string, configService *config.ConfigService) A
 	}
 }
 
+func getRankAttribute(rarityResponse RarityServiceResponse) Attribute{
+	return Attribute{
+		TraitType: "Rank",
+		Value:     strconv.Itoa(rarityResponse.Rank),
+	}
+}
+
+func getVirginAttribute(rarityResponse RarityServiceResponse) Attribute{
+	return Attribute{
+		TraitType: "Virgin",
+		Value:     strconv.FormatBool(rarityResponse.Isvirgin),
+	}
+}
+
+func getMissmatchesAttribute(rarityResponse RarityServiceResponse) Attribute{
+	return Attribute{
+		TraitType: "Color Mismatches",
+		Value:     strconv.Itoa(rarityResponse.Colormismatches),
+	}
+}
+
+func getRarityScoreAttribute(rarityResponse RarityServiceResponse) Attribute{
+	return Attribute{
+		TraitType: "Rarity Score",
+		Value:     strconv.Itoa(rarityResponse.Rarityscore),
+	}
+}
+
+func getMatchingTraitsAttribute(rarityResponse RarityServiceResponse) Attribute{
+	val := strings.Join(rarityResponse.Matchingtraits, ", ")
+	return Attribute{
+		TraitType: "Matching Traits",
+		Value:     val,
+	}
+}
+
 func getBackgroundGenePath(g string) string {
 	gene := getBackgroundGene(g)
 	return Gene(gene).toPath()
@@ -226,10 +270,10 @@ func (g *Genome) genes() []string {
 	return res
 }
 
-func (g *Genome) attributes(configService *config.ConfigService) []Attribute {
+func (g *Genome) attributes(configService *config.ConfigService, rarityResponse RarityServiceResponse) []Attribute {
 	gStr := string(*g)
 
-	res := make([]Attribute, 0, GENES_COUNT)
+	res := make([]Attribute, 0, GENES_COUNT + RARITY_RESPONSE_COUNT)
 	res = append(res, getBaseGeneAttribute(gStr, configService))
 	res = append(res, getShoesGeneAttribute(gStr, configService))
 	res = append(res, getPantsGeneAttribute(gStr, configService))
@@ -239,14 +283,24 @@ func (g *Genome) attributes(configService *config.ConfigService) []Attribute {
 	res = append(res, getWeaponLeftGeneAttribute(gStr, configService))
 	res = append(res, getWeaponRightGeneAttribute(gStr, configService))
 	res = append(res, getBackgroundGeneAttribute(gStr, configService))
+
+	// If for some reason we don't have the rarity response, don't attach the data
+	if rarityResponse.Rank != 0 {
+		res = append(res, getRankAttribute(rarityResponse))
+		res = append(res, getVirginAttribute(rarityResponse))
+		res = append(res, getMissmatchesAttribute(rarityResponse))
+		res = append(res, getRarityScoreAttribute(rarityResponse))
+		res = append(res, getMatchingTraitsAttribute(rarityResponse))
+	}
+
 	return res
 }
 
-func (g *Genome) Metadata(tokenId string, configService *config.ConfigService) Metadata {
+func (g *Genome) Metadata(tokenId string, configService *config.ConfigService, rarityResponse RarityServiceResponse) Metadata {
 	var m Metadata
 	genes := g.genes()
 
-	m.Attributes = g.attributes(configService)
+	m.Attributes = g.attributes(configService, rarityResponse)
 	m.Name = g.name(configService, tokenId)
 	m.Description = g.description(configService, tokenId)
 	m.ExternalUrl = fmt.Sprintf("%s%s", EXTERNAL_URL, tokenId)
