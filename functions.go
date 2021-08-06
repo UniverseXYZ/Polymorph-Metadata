@@ -28,8 +28,7 @@ func TokenMetadata(w http.ResponseWriter, r *http.Request) {
 	w, r = setCORS(w, r)
 	ethClient := connectToEthereum()
 	contractAddress := os.Getenv("CONTRACT_ADDRESS")
-	rarityEndpoint := os.Getenv("RARITY_ENDPOINT")
 
 	configService := config.NewConfigService("./serverless_function_source_code/config.json")
-	handlers.HandleMetadataRequest(ethClient, contractAddress, configService, rarityEndpoint)(w, r)
+	handlers.HandleMetadataRequest(ethClient, contractAddress, configService)(w, r)
 }
