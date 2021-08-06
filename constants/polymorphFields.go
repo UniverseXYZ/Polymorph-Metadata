@@ -1,0 +1,38 @@
+package constants
+
+import "github.com/polymorph-metadata/structs"
+
+var MorphFieldNames = structs.PolymorphFieldNames{
+	ObjId:                 "_id",
+	TokenId:               "tokenid",
+	Rank:                  "rank",
+	CurrentGene:           "currentgene",
+	Headwear:              "headwear",
+	Eyewear:               "eyewear",
+	Torso:                 "torso",
+	Pants:                 "pants",
+	Footwear:              "footwear",
+	LeftHand:              "lefthand",
+	RightHand:             "righthand",
+	Character:             "character",
+	Background:            "background",
+	RarityScore:           "rarityscore",
+	IsVirgin:              "isvirgin",
+	ColorMismatches:       "colormismatches",
+	MainSetName:           "mainsetname",
+	MainMatchingTraits:    "mainmatchingtraits",
+	SecSetName:            "secsetname",
+	SecMatchingTraits:     "secmatchingtraits",
+	HasCompletedSet:       "hascompletedset",
+	HandsScaler:           "handsscaler",
+	HandsSetName:          "handssetname",
+	MatchingHands:         "matchinghands",
+	NoColorMismatchScaler: "nocolormismatchscaler",
+	ColorMismatchScaler:   "colormismatchscaler",
+	DegenScaler:           "degenscaler",
+	VirginScaler:          "virginscaler",
+	BaseRarity:            "baserarity",
+	Scrambles:             "scrambles",
+	Morphs:                "morphs",
+	OldGenes:              "oldgenes",
+}

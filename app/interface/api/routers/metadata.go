@@ -11,6 +11,7 @@ import (
 	"github.com/polymorph-metadata/app/config"
 	"github.com/polymorph-metadata/app/contracts"
 	"github.com/polymorph-metadata/app/domain/metadata"
+	"github.com/polymorph-metadata/app/interface/api/handlers"
 	"github.com/polymorph-metadata/app/interface/dlt/ethereum"
 	log "github.com/sirupsen/logrus"
 )
@@ -44,9 +45,9 @@ func HandleMetadataRequest(ethClient *ethereum.EthereumClient, address string, c
 			return
 		}
 
+		rarity := handlers.GetRarityById(iTokenId)
 		g := metadata.Genome(genomeInt.String())
-		render.JSON(w, r, (&g).Metadata(tokenId, configService))
-
+		render.JSON(w, r, (&g).Metadata(tokenId, configService, rarity))
 	}
 }
 
