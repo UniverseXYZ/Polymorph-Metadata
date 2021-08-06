@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -19,14 +18,10 @@ import (
 // If no polymorph is found returns empty response
 func GetRarityById(id int) structs.RarityServiceResponse {
 	godotenv.Load()
-	log.Println(id)
 	polymorphDBName := os.Getenv("POLYMORPH_DB")
 	rarityCollectionName := os.Getenv("RARITY_COLLECTION")
-	log.Println(polymorphDBName)
-	log.Println(rarityCollectionName)
 	collection, err := db.GetMongoDbCollection(polymorphDBName, rarityCollectionName)
 	if err != nil {
-		log.Println("bad")
 		return structs.RarityServiceResponse{}
 	}
 
