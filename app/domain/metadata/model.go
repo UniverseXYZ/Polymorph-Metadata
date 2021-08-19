@@ -2,10 +2,12 @@ package metadata
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 
 	"github.com/polymorph-metadata/app/config"
+	"github.com/polymorph-metadata/structs"
 )
 
 const POLYMORPH_IMAGE_URL string = "https://storage.googleapis.com/polymorph-images/"
@@ -23,9 +25,20 @@ const WEAPON_LEFT_GENES_COUNT int = 32
 
 type Genome string
 type Gene int
-type Attribute struct {
+type StringAttribute struct {
 	TraitType string `json:"trait_type"`
 	Value     string `json:"value"`
+}
+
+type IntegerAttribute struct {
+	TraitType string `json:"trait_type"`
+	Value     int    `json:"value"`
+}
+
+type FloatAttribute struct {
+	TraitType   string  `json:"trait_type"`
+	Value       float64 `json:"value"`
+	DisplayType string  `json:"display_type"`
 }
 
 func (g Gene) toPath() string {
@@ -47,9 +60,9 @@ func getWeaponLeftGene(g string) int {
 	return getGeneInt(g, -18, -16, WEAPON_LEFT_GENES_COUNT)
 }
 
-func getWeaponLeftGeneAttribute(g string, configService *config.ConfigService) Attribute {
+func getWeaponLeftGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
 	gene := getWeaponLeftGene(g)
-	return Attribute{
+	return StringAttribute{
 		TraitType: "Left Hand",
 		Value:     configService.WeaponLeft[gene],
 	}
@@ -64,9 +77,9 @@ func getWeaponRightGene(g string) int {
 	return getGeneInt(g, -16, -14, WEAPON_RIGHT_GENES_COUNT)
 }
 
-func getWeaponRightGeneAttribute(g string, configService *config.ConfigService) Attribute {
+func getWeaponRightGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
 	gene := getWeaponRightGene(g)
-	return Attribute{
+	return StringAttribute{
 		TraitType: "Right Hand",
 		Value:     configService.WeaponRight[gene],
 	}
@@ -81,9 +94,9 @@ func getHeadGene(g string) int {
 	return getGeneInt(g, -14, -12, HEAD_GENES_COUNT)
 }
 
-func getHeadGeneAttribute(g string, configService *config.ConfigService) Attribute {
+func getHeadGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
 	gene := getHeadGene(g)
-	return Attribute{
+	return StringAttribute{
 		TraitType: "Headwear",
 		Value:     configService.Headwear[gene],
 	}
@@ -98,9 +111,9 @@ func getEyewearGene(g string) int {
 	return getGeneInt(g, -12, -10, EYEWEAR_GENES_COUNT)
 }
 
-func getEyewearGeneAttribute(g string, configService *config.ConfigService) Attribute {
+func getEyewearGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
 	gene := getEyewearGene(g)
-	return Attribute{
+	return StringAttribute{
 		TraitType: "Eyewear",
 		Value:     configService.Eyewear[gene],
 	}
@@ -115,9 +128,9 @@ func getShoesGene(g string) int {
 	return getGeneInt(g, -10, -8, SHOES_GENES_COUNT)
 }
 
-func getShoesGeneAttribute(g string, configService *config.ConfigService) Attribute {
+func getShoesGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
 	gene := getShoesGene(g)
-	return Attribute{
+	return StringAttribute{
 		TraitType: "Footwear",
 		Value:     configService.Footwear[gene],
 	}
@@ -132,9 +145,9 @@ func getTorsoGene(g string) int {
 	return getGeneInt(g, -8, -6, TORSO_GENES_COUNT)
 }
 
-func getTorsoGeneAttribute(g string, configService *config.ConfigService) Attribute {
+func getTorsoGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
 	gene := getTorsoGene(g)
-	return Attribute{
+	return StringAttribute{
 		TraitType: "Torso",
 		Value:     configService.Torso[gene],
 	}
@@ -149,9 +162,9 @@ func getPantsGene(g string) int {
 	return getGeneInt(g, -6, -4, PANTS_GENES_COUNT)
 }
 
-func getPantsGeneAttribute(g string, configService *config.ConfigService) Attribute {
+func getPantsGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
 	gene := getPantsGene(g)
-	return Attribute{
+	return StringAttribute{
 		TraitType: "Pants",
 		Value:     configService.Pants[gene],
 	}
@@ -166,9 +179,9 @@ func getBackgroundGene(g string) int {
 	return getGeneInt(g, -4, -2, BACKGROUND_GENE_COUNT)
 }
 
-func getBackgroundGeneAttribute(g string, configService *config.ConfigService) Attribute {
+func getBackgroundGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
 	gene := getBackgroundGene(g)
-	return Attribute{
+	return StringAttribute{
 		TraitType: "Background",
 		Value:     configService.Background[gene],
 	}
@@ -183,9 +196,9 @@ func getBaseGene(g string) int {
 	return getGeneInt(g, -2, 0, BASE_GENES_COUNT)
 }
 
-func getBaseGeneAttribute(g string, configService *config.ConfigService) Attribute {
+func getBaseGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
 	gene := getBaseGene(g)
-	return Attribute{
+	return StringAttribute{
 		TraitType: "Character",
 		Value:     configService.Character[gene],
 	}
@@ -226,10 +239,25 @@ func (g *Genome) genes() []string {
 	return res
 }
 
-func (g *Genome) attributes(configService *config.ConfigService) []Attribute {
+func getRarityScoreAttribute(rarity float64) FloatAttribute {
+	return FloatAttribute{
+		TraitType:   "Rarity Score",
+		DisplayType: "number",
+		Value:       math.Round(rarity*100) / 100,
+	}
+}
+
+func getRankAttribute(rank int) IntegerAttribute {
+	return IntegerAttribute{
+		TraitType: "Rank",
+		Value:     rank,
+	}
+}
+
+func (g *Genome) attributes(configService *config.ConfigService, rarityResponse structs.RarityServiceResponse) []interface{} {
 	gStr := string(*g)
 
-	res := make([]Attribute, 0, GENES_COUNT)
+	res := []interface{}{}
 	res = append(res, getBaseGeneAttribute(gStr, configService))
 	res = append(res, getShoesGeneAttribute(gStr, configService))
 	res = append(res, getPantsGeneAttribute(gStr, configService))
@@ -239,14 +267,17 @@ func (g *Genome) attributes(configService *config.ConfigService) []Attribute {
 	res = append(res, getWeaponLeftGeneAttribute(gStr, configService))
 	res = append(res, getWeaponRightGeneAttribute(gStr, configService))
 	res = append(res, getBackgroundGeneAttribute(gStr, configService))
+	res = append(res, getRarityScoreAttribute(rarityResponse.RarityScore))
+	res = append(res, getRankAttribute(rarityResponse.Rank))
+
 	return res
 }
 
-func (g *Genome) Metadata(tokenId string, configService *config.ConfigService) Metadata {
+func (g *Genome) Metadata(tokenId string, configService *config.ConfigService, rarityResponse structs.RarityServiceResponse) Metadata {
 	var m Metadata
 	genes := g.genes()
 
-	m.Attributes = g.attributes(configService)
+	m.Attributes = g.attributes(configService, rarityResponse)
 	m.Name = g.name(configService, tokenId)
 	m.Description = g.description(configService, tokenId)
 	m.ExternalUrl = fmt.Sprintf("%s%s", EXTERNAL_URL, tokenId)
@@ -277,6 +308,6 @@ type Metadata struct {
 	Description string      `json:"description"`
 	Name        string      `json:"name"`
 	Image       string      `json:"image"`
-	Attributes  []Attribute `json:"attributes"`
+	Attributes  interface{} `json:"attributes"`
 	ExternalUrl string      `json:"external_url"`
 }

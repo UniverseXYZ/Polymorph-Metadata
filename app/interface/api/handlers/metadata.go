@@ -43,8 +43,9 @@ func HandleMetadataRequest(ethClient *ethereum.EthereumClient, address string, c
 			return
 		}
 
-		g := metadata.Genome(genomeInt.String())
-		render.JSON(w, r, (&g).Metadata(tokenId, configService))
+		rarityResponse := GetRarityById(iTokenId)
 
+		g := metadata.Genome(genomeInt.String())
+		render.JSON(w, r, (&g).Metadata(tokenId, configService, rarityResponse))
 	}
 }
