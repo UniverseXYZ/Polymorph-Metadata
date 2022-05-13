@@ -12,16 +12,20 @@ import (
 
 const POLYMORPH_IMAGE_URL string = "https://storage.googleapis.com/polymorph-images/"
 const EXTERNAL_URL string = "https://universe.xyz/polymorphs/"
-const GENES_COUNT = 9
-const BACKGROUND_GENE_COUNT int = 12
-const BASE_GENES_COUNT int = 11
-const SHOES_GENES_COUNT int = 25
-const PANTS_GENES_COUNT int = 33
-const TORSO_GENES_COUNT int = 34
-const EYEWEAR_GENES_COUNT int = 13
-const HEAD_GENES_COUNT int = 31
-const WEAPON_RIGHT_GENES_COUNT int = 32
-const WEAPON_LEFT_GENES_COUNT int = 32
+const GENES_COUNT = 13
+const BACKGROUND_GENE_COUNT int = 5
+const HAIR_LEFT int = 33
+const HAIR_RIGHT int = 33
+const EAR_LEFT int = 33
+const EAR_RIGHT int = 33
+const BEARD_TOP_LEFT int = 33
+const BEARD_TOP_RIGHT int = 33
+const LIPS_LEFT int = 33
+const LIPS_RIGHT int = 33
+const BEARD_BOTTOM_LEFT int = 33
+const BEARD_BOTTOM_RIGHT int = 33
+const EYE_RIGHT int = 33
+const EYE_LEFT int =33
 
 type Genome string
 type Gene int
@@ -56,127 +60,218 @@ func getGeneInt(g string, start, end, count int) int {
 	return gene % count
 }
 
-func getWeaponLeftGene(g string) int {
-	return getGeneInt(g, -18, -16, WEAPON_LEFT_GENES_COUNT)
+
+func getEyeRightGene(g string) int {
+	return getGeneInt(g, -28, -26, LIPS_RIGHT)
 }
 
-func getWeaponLeftGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
-	gene := getWeaponLeftGene(g)
+func getEyeRightGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
+	gene := getEyeRightGene(g)
 	return StringAttribute{
-		TraitType: "Left Hand",
-		Value:     configService.WeaponLeft[gene],
+		TraitType: "Eye Right",
+		Value:     configService.Traits[gene],
 	}
 }
 
-func getWeaponLeftGenePath(g string) string {
-	gene := getWeaponLeftGene(g)
+func getEyeRightPath(g string) string {
+	gene := getEyeRightGene(g)
 	return Gene(gene).toPath()
 }
 
-func getWeaponRightGene(g string) int {
-	return getGeneInt(g, -16, -14, WEAPON_RIGHT_GENES_COUNT)
+func getEyeLeftGene(g string) int {
+	return getGeneInt(g, -26, -24, LIPS_LEFT)
 }
 
-func getWeaponRightGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
-	gene := getWeaponRightGene(g)
+func getEyeLeftGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
+	gene := getEyeLeftGene(g)
 	return StringAttribute{
-		TraitType: "Right Hand",
-		Value:     configService.WeaponRight[gene],
+		TraitType: "Eye Left",
+		Value:     configService.Traits[gene],
 	}
 }
 
-func getWeaponRightGenePath(g string) string {
-	gene := getWeaponRightGene(g)
+func getEyeLeftPath(g string) string {
+	gene := getEyeLeftGene(g)
 	return Gene(gene).toPath()
 }
 
-func getHeadGene(g string) int {
-	return getGeneInt(g, -14, -12, HEAD_GENES_COUNT)
+
+func getBeardBottomRightGene(g string) int {
+	return getGeneInt(g, -24, -22, BEARD_BOTTOM_RIGHT)
 }
 
-func getHeadGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
-	gene := getHeadGene(g)
+func getBeardBottomRightGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
+	gene := getBeardBottomRightGene(g)
 	return StringAttribute{
-		TraitType: "Headwear",
-		Value:     configService.Headwear[gene],
+		TraitType: "Beard Bottom Right",
+		Value:     configService.Traits[gene],
 	}
 }
 
-func getHeadGenePath(g string) string {
-	gene := getHeadGene(g)
+func getBeardBottomRightPath(g string) string {
+	gene := getBeardBottomRightGene(g)
 	return Gene(gene).toPath()
 }
 
-func getEyewearGene(g string) int {
-	return getGeneInt(g, -12, -10, EYEWEAR_GENES_COUNT)
+func getBeardBottomLeftGene(g string) int {
+	return getGeneInt(g, -22, -20, BEARD_BOTTOM_LEFT)
 }
 
-func getEyewearGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
-	gene := getEyewearGene(g)
+func getBeardBottomLeftGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
+	gene := getBeardBottomLeftGene(g)
 	return StringAttribute{
-		TraitType: "Eyewear",
-		Value:     configService.Eyewear[gene],
+		TraitType: "Beard Bottom Left",
+		Value:     configService.Traits[gene],
 	}
 }
 
-func getEyewearGenePath(g string) string {
-	gene := getEyewearGene(g)
+func getBeardBottomLeftPath(g string) string {
+	gene := getBeardBottomLeftGene(g)
 	return Gene(gene).toPath()
 }
 
-func getShoesGene(g string) int {
-	return getGeneInt(g, -10, -8, SHOES_GENES_COUNT)
+func getLipsRightGene(g string) int {
+	return getGeneInt(g, -20, -18, LIPS_RIGHT)
 }
 
-func getShoesGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
-	gene := getShoesGene(g)
+func getLipsRightGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
+	gene := getLipsRightGene(g)
 	return StringAttribute{
-		TraitType: "Footwear",
-		Value:     configService.Footwear[gene],
+		TraitType: "Lips Right",
+		Value:     configService.Traits[gene],
 	}
 }
 
-func getShoesGenePath(g string) string {
-	gene := getShoesGene(g)
+func getLipsRightPath(g string) string {
+	gene := getLipsRightGene(g)
 	return Gene(gene).toPath()
 }
 
-func getTorsoGene(g string) int {
-	return getGeneInt(g, -8, -6, TORSO_GENES_COUNT)
+func getLipsLeftGene(g string) int {
+	return getGeneInt(g, -18, -16, LIPS_LEFT)
 }
 
-func getTorsoGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
-	gene := getTorsoGene(g)
+func getLipsLeftGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
+	gene := getLipsLeftGene(g)
 	return StringAttribute{
-		TraitType: "Torso",
-		Value:     configService.Torso[gene],
+		TraitType: "Lips Left",
+		Value:     configService.Traits[gene],
 	}
 }
 
-func getTorsoGenePath(g string) string {
-	gene := getTorsoGene(g)
+func getLipsLeftPath(g string) string {
+	gene := getLipsLeftGene(g)
 	return Gene(gene).toPath()
 }
 
-func getPantsGene(g string) int {
-	return getGeneInt(g, -6, -4, PANTS_GENES_COUNT)
+
+func getBeardTopRightGene(g string) int {
+	return getGeneInt(g, -16, -14, BEARD_TOP_RIGHT)
 }
 
-func getPantsGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
-	gene := getPantsGene(g)
+func getBeardTopRightGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
+	gene := getBeardTopRightGene(g)
 	return StringAttribute{
-		TraitType: "Pants",
-		Value:     configService.Pants[gene],
+		TraitType: "Beard Top Right",
+		Value:     configService.Traits[gene],
 	}
 }
 
-func getPantsGenePath(g string) string {
-	gene := getPantsGene(g)
+func getBeardTopRightPath(g string) string {
+	gene := getBeardTopRightGene(g)
 	return Gene(gene).toPath()
 }
+
+func getBeardTopLeftGene(g string) int {
+	return getGeneInt(g, -14, -12, BEARD_BOTTOM_LEFT)
+}
+
+func getBeardTopLeftGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
+	gene := getBeardTopLeftGene(g)
+	return StringAttribute{
+		TraitType: "Beard Top Left",
+		Value:     configService.Traits[gene],
+	}
+}
+
+func getBeardTopLeftPath(g string) string {
+	gene := getBeardTopLeftGene(g)
+	return Gene(gene).toPath()
+}
+
+
+func getEarsRightGene(g string) int {
+	return getGeneInt(g, -12, -10, EAR_RIGHT)
+}
+
+func getEarsRightGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
+	gene := getEarsRightGene(g)
+	return StringAttribute{
+		TraitType: "Ear Right",
+		Value:     configService.Traits[gene],
+	}
+}
+
+func getEarsRightPath(g string) string {
+	gene := getEarsRightGene(g)
+	return Gene(gene).toPath()
+}
+
+func getEarsLeftGene(g string) int {
+	return getGeneInt(g, -10, -8, EAR_LEFT)
+}
+
+func getEarsLeftGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
+	gene := getEarsLeftGene(g)
+	return StringAttribute{
+		TraitType: "Ear Left",
+		Value:     configService.Traits[gene],
+	}
+}
+
+func getEarsLeftPath(g string) string {
+	gene := getEarsLeftGene(g)
+	return Gene(gene).toPath()
+}
+
+
+func getHairRightGene(g string) int {
+	return getGeneInt(g, -6, -4, HAIR_RIGHT)
+}
+
+func getHairRightGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
+	gene := getHairRightGene(g)
+	return StringAttribute{
+		TraitType: "Hair Right",
+		Value:     configService.Traits[gene],
+	}
+}
+
+func getHairRightPath(g string) string {
+	gene := getHairRightGene(g)
+	return Gene(gene).toPath()
+}
+
+func getHairLeftGene(g string) int {
+	return getGeneInt(g, -4, -2, HAIR_LEFT)
+}
+
+func getHairLeftGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
+	gene := getHairLeftGene(g)
+	return StringAttribute{
+		TraitType: "Hair Left",
+		Value:     configService.Traits[gene],
+	}
+}
+
+func getHairLeftPath(g string) string {
+	gene := getHairLeftGene(g)
+	return Gene(gene).toPath()
+}
+
 
 func getBackgroundGene(g string) int {
-	return getGeneInt(g, -4, -2, BACKGROUND_GENE_COUNT)
+	return getGeneInt(g, -2, 0, BACKGROUND_GENE_COUNT)
 }
 
 func getBackgroundGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
@@ -192,48 +287,56 @@ func getBackgroundGenePath(g string) string {
 	return Gene(gene).toPath()
 }
 
-func getBaseGene(g string) int {
-	return getGeneInt(g, -2, 0, BASE_GENES_COUNT)
-}
-
-func getBaseGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
-	gene := getBaseGene(g)
-	return StringAttribute{
-		TraitType: "Character",
-		Value:     configService.Character[gene],
-	}
-}
-
-func getBaseGenePath(g string) string {
-	gene := getBaseGene(g)
-	return Gene(gene).toPath()
-}
 
 func (g *Genome) name(configService *config.ConfigService, tokenId string) string {
-	gStr := string(*g)
-	gene := getBaseGene(gStr)
-	return fmt.Sprintf("%v #%v", configService.Character[gene], tokenId)
+	return fmt.Sprintf("Polymorphic Face #%v", tokenId)
 }
 
 func (g *Genome) description(configService *config.ConfigService, tokenId string) string {
-	gStr := string(*g)
-	gene := getBaseGene(gStr)
-	return fmt.Sprintf("The %v named %v #%v is a citizen of the Polymorph Universe and has a unique genetic code! You can scramble your Polymorph at anytime.", configService.Type[gene], configService.Character[gene], tokenId)
+	return fmt.Sprintf("Polymorphic Face Description")
 }
+
+
+// const BASE_GENES_COUNT int = 11
+// const SHOES_GENES_COUNT int = 25
+// const PANTS_GENES_COUNT int = 33
+// const TORSO_GENES_COUNT int = 34
+// const EYEWEAR_GENES_COUNT int = 13
+// const HEAD_GENES_COUNT int = 31
+// const WEAPON_RIGHT_GENES_COUNT int = 32
+// const WEAPON_LEFT_GENES_COUNT int = 32
+
+
+// const HAIR_LEFT int = 33
+// const HAIR_RIGHT int = 33
+// const EAR_LEFT int = 33
+// const EAR_RIGHT int = 33
+// const BEARD_TOP_LEFT int = 33
+// const BEARD_TOP_RIGHT int = 33
+// const LIPS_LEFT int = 33
+// const LIPS_RIGHT int = 33
+// const BEARD_BOTTOM_LEFT int = 33
+// const BEARD_BOTTOM_RIGHT int = 33
+// const EYE_RIGHT int = 33
+// const EYE_LEFT int =33
 
 func (g *Genome) genes() []string {
 	gStr := string(*g)
 
 	res := make([]string, 0, GENES_COUNT)
 
-	res = append(res, getWeaponRightGenePath(gStr))
-	res = append(res, getWeaponLeftGenePath(gStr))
-	res = append(res, getHeadGenePath(gStr))
-	res = append(res, getEyewearGenePath(gStr))
-	res = append(res, getTorsoGenePath(gStr))
-	res = append(res, getPantsGenePath(gStr))
-	res = append(res, getShoesGenePath(gStr))
-	res = append(res, getBaseGenePath(gStr))
+	res = append(res, getEyeRightPath(gStr))
+	res = append(res, getEyeLeftPath(gStr))
+	res = append(res, getBeardBottomRightPath(gStr))
+	res = append(res, getBeardBottomLeftPath(gStr))
+	res = append(res, getLipsRightPath(gStr))
+	res = append(res, getLipsLeftPath(gStr))
+	res = append(res, getBeardTopRightPath(gStr))
+	res = append(res, getBeardTopLeftPath(gStr))
+	res = append(res, getEarsRightPath(gStr))
+	res = append(res, getEarsLeftPath(gStr))
+	res = append(res, getHairRightPath(gStr))
+	res = append(res, getHairLeftPath(gStr))
 	res = append(res, getBackgroundGenePath(gStr))
 
 	return res
@@ -258,14 +361,19 @@ func (g *Genome) attributes(configService *config.ConfigService, rarityResponse 
 	gStr := string(*g)
 
 	res := []interface{}{}
-	res = append(res, getBaseGeneAttribute(gStr, configService))
-	res = append(res, getShoesGeneAttribute(gStr, configService))
-	res = append(res, getPantsGeneAttribute(gStr, configService))
-	res = append(res, getTorsoGeneAttribute(gStr, configService))
-	res = append(res, getEyewearGeneAttribute(gStr, configService))
-	res = append(res, getHeadGeneAttribute(gStr, configService))
-	res = append(res, getWeaponLeftGeneAttribute(gStr, configService))
-	res = append(res, getWeaponRightGeneAttribute(gStr, configService))
+
+	res = append(res, getEyeRightGeneAttribute(gStr, configService))
+	res = append(res, getEyeLeftGeneAttribute(gStr, configService))
+	res = append(res, getBeardBottomRightGeneAttribute(gStr, configService))
+	res = append(res, getBeardBottomLeftGeneAttribute(gStr, configService))
+	res = append(res, getLipsRightGeneAttribute(gStr, configService))
+	res = append(res, getLipsLeftGeneAttribute(gStr, configService))
+	res = append(res, getBeardTopRightGeneAttribute(gStr, configService))
+	res = append(res, getBeardTopLeftGeneAttribute(gStr, configService))
+	res = append(res, getEarsRightGeneAttribute(gStr, configService))
+	res = append(res, getEarsLeftGeneAttribute(gStr, configService))
+	res = append(res, getHairRightGeneAttribute(gStr, configService))
+	res = append(res, getHairLeftGeneAttribute(gStr, configService))
 	res = append(res, getBackgroundGeneAttribute(gStr, configService))
 	res = append(res, getRarityScoreAttribute(rarityResponse.RarityScore))
 	res = append(res, getRankAttribute(rarityResponse.Rank))
@@ -294,11 +402,11 @@ func (g *Genome) Metadata(tokenId string, configService *config.ConfigService, r
 
 	imageURL := b.String()
 
-	imageExists := imageExists(imageURL)
+	// imageExists := imageExists(imageURL)
 
-	if !imageExists {
-		generateAndSaveImage(genes)
-	}
+	// if !imageExists {
+	// 	generateAndSaveImage(genes)
+	// }
 
 	m.Image = imageURL
 	return m

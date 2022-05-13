@@ -17,6 +17,7 @@ type ConfigService struct {
 	WeaponRight []string `json:"weaponright"`
 	WeaponLeft  []string `json:"weaponleft"`
 	Type        []string `json:"type"`
+	Traits		[]string `json:"traits"`
 	Background  []string `json:"background"`
 }
 
