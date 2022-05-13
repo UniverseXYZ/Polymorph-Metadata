@@ -402,11 +402,11 @@ func (g *Genome) Metadata(tokenId string, configService *config.ConfigService, r
 
 	imageURL := b.String()
 
-	// imageExists := imageExists(imageURL)
+	imageExists := imageExists(imageURL)
 
-	// if !imageExists {
-	// 	generateAndSaveImage(genes)
-	// }
+	if !imageExists {
+		generateAndSaveImage(genes)
+	}
 
 	m.Image = imageURL
 	return m

@@ -13,9 +13,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const IMG_SIZE = 4000
-const GCLOUD_UPLOAD_BUCKET_NAME = "polymorph-images"
-const GCLOUD_SOURCE_BUCKET_NAME = "polymorph-source-images"
+const IMG_SIZE = 3000
+const GCLOUD_UPLOAD_BUCKET_NAME = "polymorph-faces-images"
+const GCLOUD_SOURCE_BUCKET_NAME = "polymorph-faces-source-images"
 
 func imageExists(imageURL string) bool {
 	resp, err := http.Get(imageURL)
@@ -30,9 +30,10 @@ func combineRemoteImages(bucket *storage.BucketHandle, basePath string, overlayP
 
 	ctx := context.Background()
 
+	fmt.Println(basePath)
 	baseReader, err := bucket.Object(basePath).NewReader(ctx)
 	if err != nil {
-		log.Fatalf("failed to open image: %v", err)
+		log.Fatalf("failed to open image 1: %v", err)
 	}
 	defer baseReader.Close()
 	base, err := imaging.Decode(baseReader)
@@ -43,14 +44,15 @@ func combineRemoteImages(bucket *storage.BucketHandle, basePath string, overlayP
 	dst = imaging.Paste(dst, base, image.Pt(0, 0))
 
 	for _, op := range overlayPaths {
+		fmt.Println(op)
 		r, err := bucket.Object(op).NewReader(ctx)
 		if err != nil {
-			log.Fatalf("failed to open image: %v", err)
+			log.Fatalf("failed to open image 2: %v", err)
 		}
 		defer r.Close()
 		o, err := imaging.Decode(r)
 		if err != nil {
-			log.Fatalf("failed to open image: %v", err)
+			log.Fatalf("failed to open image 3: %v", err)
 		}
 		dst = imaging.Overlay(dst, o, image.Pt(0, 0), 1)
 	}
@@ -99,6 +101,7 @@ func generateAndSaveImage(genes []string) {
 	f := make([]string, len(genes))
 
 	for i, gene := range revGenes {
+		fmt.Println(i, gene)
 		f[i] = fmt.Sprintf("./images/%v/%s.png", i, gene)
 	}
 
