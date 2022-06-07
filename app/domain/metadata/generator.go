@@ -14,8 +14,10 @@ import (
 )
 
 const IMG_SIZE = 4000
-const GCLOUD_UPLOAD_BUCKET_NAME = "polymorph-images"
+const GCLOUD_UPLOAD_BUCKET_NAME = "polymorphs-v1-test"
 const GCLOUD_SOURCE_BUCKET_NAME = "polymorph-source-images"
+const IFRAME_CLOUD_FUNCTION_URL = "https://us-central1-polymorphmetadata.cloudfunctions.net/rinkeby-iframe?id="
+const IFRAME_HTMLS_BUCKET_NAME = "iframe-htmls"
 
 func imageExists(imageURL string) bool {
 	resp, err := http.Get(imageURL)
@@ -24,6 +26,30 @@ func imageExists(imageURL string) bool {
 	}
 
 	return resp.StatusCode != 404
+}
+
+func objectExists(objectURL string) bool {
+	ctx := context.Background()
+	client, err := storage.NewClient(ctx)
+
+	if err != nil {
+		log.Errorf("storage.NewClient: %v", err)
+	}
+	defer client.Close()
+
+	bucket := client.Bucket(IFRAME_HTMLS_BUCKET_NAME)
+	stats, err := bucket.Object(objectURL).Attrs(ctx)
+
+	return stats != nil
+}
+
+// Queries iframe cloud function so that the animation_url is automatically generated from metadata function
+func generateIframeAnimation(polymorphID *string) {
+	getUrl := IFRAME_CLOUD_FUNCTION_URL + *polymorphID
+	_, err := http.Get(getUrl)
+	if err != nil {
+		log.Errorf("Couldn't query iframe-cloud-function. Original error: %v", err)
+	}
 }
 
 func combineRemoteImages(bucket *storage.BucketHandle, basePath string, overlayPaths ...string) *image.NRGBA {

@@ -10,7 +10,9 @@ import (
 	"github.com/polymorph-metadata/structs"
 )
 
-const POLYMORPH_IMAGE_URL string = "https://storage.googleapis.com/polymorph-images/"
+const POLYMORPH_IMAGE_URL string = "https://storage.googleapis.com/polymorphs-v1-test/"
+const POLYMORPH_IMAGE_URL_3D string = "https://storage.googleapis.com/polymorph-images_test/"
+const POLYMORPH_ANIMATION_URL string = "https://storage.googleapis.com/iframe-htmls/"
 const EXTERNAL_URL string = "https://universe.xyz/polymorphs/"
 const GENES_COUNT = 9
 const BACKGROUND_GENE_COUNT int = 12
@@ -284,30 +286,58 @@ func (g *Genome) Metadata(tokenId string, configService *config.ConfigService, r
 
 	b := strings.Builder{}
 
+	f := strings.Builder{}
+
+	t := strings.Builder{}
+
 	b.WriteString(POLYMORPH_IMAGE_URL) // Start with base url
+
+	t.WriteString(POLYMORPH_IMAGE_URL_3D)
 
 	for _, gene := range genes {
 		b.WriteString(gene)
+		f.WriteString(gene)
+		t.WriteString(gene)
 	}
+
+	animationURL := POLYMORPH_ANIMATION_URL + f.String()
+
+	if !objectExists(animationURL) {
+		generateIframeAnimation(&tokenId)
+	}
+
+	m.AnimationUrl = animationURL
 
 	b.WriteString(".jpg") // Finish with jpg extension
 
+	t.WriteString(".jpg")
+
 	imageURL := b.String()
 
-	imageExists := imageExists(imageURL)
+	imageExists2d := imageExists(imageURL)
 
-	if !imageExists {
+	if !imageExists2d {
 		generateAndSaveImage(genes)
 	}
 
 	m.Image = imageURL
+
+	imageURL3D := t.String()
+
+	// No need to check if 3D image exists and generate if it doesn't because it should already be done
+	// by the animation_url handler
+
+	m.Image3D = imageURL3D
+
 	return m
 }
 
 type Metadata struct {
-	Description string      `json:"description"`
-	Name        string      `json:"name"`
-	Image       string      `json:"image"`
-	Attributes  interface{} `json:"attributes"`
-	ExternalUrl string      `json:"external_url"`
+	Description  string      `json:"description"`
+	Name         string      `json:"name"`
+	Image        string      `json:"image"`
+	Image3D      string      `json:"image3d"`
+	Attributes   interface{} `json:"attributes"`
+	ExternalUrl  string      `json:"external_url"`
+	AnimationUrl string      `json:"animation_url"`
 }

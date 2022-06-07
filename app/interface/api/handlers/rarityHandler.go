@@ -20,6 +20,7 @@ func GetRarityById(id int) structs.RarityServiceResponse {
 	godotenv.Load()
 	polymorphDBName := os.Getenv("POLYMORPH_DB")
 	rarityCollectionName := os.Getenv("RARITY_COLLECTION")
+
 	collection, err := db.GetMongoDbCollection(polymorphDBName, rarityCollectionName)
 	if err != nil {
 		return structs.RarityServiceResponse{}
@@ -35,6 +36,8 @@ func GetRarityById(id int) structs.RarityServiceResponse {
 	curr := collection.FindOne(context.Background(), filter, &findOptions)
 
 	curr.Decode(&result)
+
+	// db.DisconnectDB()
 
 	return result
 }

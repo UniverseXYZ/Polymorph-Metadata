@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"sync"
 
@@ -31,7 +32,7 @@ func GetDbConnection() *mongo.Client {
 	return instance
 }
 
-// ConnectToDb retrieves db config from .env and tries to conenct to the database.
+// ConnectToDb retrieves db config from .env and tries to connect to the database.
 func ConnectToDb() *mongo.Client {
 	err := godotenv.Load()
 	if err != nil {
@@ -79,4 +80,18 @@ func GetMongoDbCollection(DbName string, CollectionName string) (*mongo.Collecti
 
 	collection := client.Database(DbName).Collection(CollectionName)
 	return collection, nil
+}
+
+func DisconnectDB() {
+	if instance == nil {
+		return
+	}
+
+	err := instance.Disconnect(context.TODO())
+	if err != nil {
+		log.Errorln("FAILED TO CLOSE Mongo Connection")
+		log.Errorln(err)
+	} else {
+		fmt.Println("Connection to MongoDB closed.")
+	}
 }
