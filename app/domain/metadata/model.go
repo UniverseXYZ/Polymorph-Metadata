@@ -300,13 +300,15 @@ func (g *Genome) Metadata(tokenId string, configService *config.ConfigService, r
 		t.WriteString(gene)
 	}
 
-	animationURL := POLYMORPH_ANIMATION_URL + f.String()
+	//animationURL := POLYMORPH_ANIMATION_URL + f.String()
 
-	if !objectExists(animationURL) {
-		generateIframeAnimation(&tokenId)
-	}
+	//var cid string
+	//if !objectExists(animationURL) {
+	//	cid = generateIframeAnimation(&tokenId, &animationURL)
+	//}
+	cid := generateIframeAnimation(&tokenId)
 
-	m.AnimationUrl = animationURL
+	m.AnimationUrl = cid
 
 	b.WriteString(".jpg") // Finish with jpg extension
 

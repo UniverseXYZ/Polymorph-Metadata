@@ -26,6 +26,8 @@ func GetRarityById(id int) structs.RarityServiceResponse {
 		return structs.RarityServiceResponse{}
 	}
 
+	defer db.DisconnectDB()
+
 	findOptions := options.FindOneOptions{}
 	removePrivateFieldsSingle(&findOptions)
 
@@ -36,8 +38,6 @@ func GetRarityById(id int) structs.RarityServiceResponse {
 	curr := collection.FindOne(context.Background(), filter, &findOptions)
 
 	curr.Decode(&result)
-
-	// db.DisconnectDB()
 
 	return result
 }

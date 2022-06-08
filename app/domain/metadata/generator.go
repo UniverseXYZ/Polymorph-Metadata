@@ -1,16 +1,16 @@
 package metadata
 
 import (
+	"cloud.google.com/go/storage"
 	"context"
+	"encoding/json"
 	"fmt"
+	"github.com/disintegration/imaging"
+	log "github.com/sirupsen/logrus"
 	"image"
 	"image/color"
 	"net/http"
 	"strings"
-
-	"cloud.google.com/go/storage"
-	"github.com/disintegration/imaging"
-	log "github.com/sirupsen/logrus"
 )
 
 const IMG_SIZE = 4000
@@ -44,12 +44,23 @@ func objectExists(objectURL string) bool {
 }
 
 // Queries iframe cloud function so that the animation_url is automatically generated from metadata function
-func generateIframeAnimation(polymorphID *string) {
+func generateIframeAnimation(polymorphID *string) string {
 	getUrl := IFRAME_CLOUD_FUNCTION_URL + *polymorphID
-	_, err := http.Get(getUrl)
+	resp, err := http.Get(getUrl)
 	if err != nil {
 		log.Errorf("Couldn't query iframe-cloud-function. Original error: %v", err)
 	}
+
+	type iframeResponse struct {
+		AnimationUrl string `json:"animation_url"`
+	}
+
+	iframeResp := iframeResponse{}
+
+	decoder := json.NewDecoder(resp.Body)
+
+	err = decoder.Decode(&iframeResp)
+	return iframeResp.AnimationUrl
 }
 
 func combineRemoteImages(bucket *storage.BucketHandle, basePath string, overlayPaths ...string) *image.NRGBA {
