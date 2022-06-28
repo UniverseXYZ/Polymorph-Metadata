@@ -35,6 +35,16 @@ func HandleMetadataRequest(ethClient *ethereum.EthereumClient, address string, c
 			return
 		}
 
+		ownerOf, err := instance.OwnerOf(nil, big.NewInt(int64(iTokenId)))
+
+		if ownerOf == common.HexToAddress("0x0000000000000000000000000000000000000000") {
+			msg := "Query for non-existing token"
+			render.Status(r, 404)
+			render.JSON(w, r, msg)
+			log.Errorln(msg)
+			return
+		}
+
 		genomeInt, err := instance.GeneOf(nil, big.NewInt(int64(iTokenId)))
 		if err != nil {
 			render.Status(r, 500)
