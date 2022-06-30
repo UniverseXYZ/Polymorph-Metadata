@@ -1,19 +1,17 @@
 package handlers
 
 import (
-	"math/big"
-	"net/http"
-	"strconv"
-	"fmt"
-
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/go-chi/render"
 	"github.com/polymorph-metadata/app/config"
 	"github.com/polymorph-metadata/app/contracts"
 	"github.com/polymorph-metadata/app/domain/metadata"
 	"github.com/polymorph-metadata/app/interface/dlt/ethereum"
-	log "github.com/sirupsen/logrus"
 	"github.com/polymorph-metadata/structs"
+	log "github.com/sirupsen/logrus"
+	"math/big"
+	"net/http"
+	"strconv"
 )
 
 func HandleMetadataRequest(ethClient *ethereum.EthereumClient, address string, configService *config.ConfigService) func(w http.ResponseWriter, r *http.Request) {
@@ -45,9 +43,8 @@ func HandleMetadataRequest(ethClient *ethereum.EthereumClient, address string, c
 			log.Errorln(err)
 			return
 		}
-		fmt.Println("genomeInt ", genomeInt)
 
-		rarityResponse := structs.RarityServiceResponse{0,0}
+		rarityResponse := structs.RarityServiceResponse{0, 0}
 
 		g := metadata.Genome(genomeInt.String())
 		render.JSON(w, r, (&g).Metadata(tokenId, configService, rarityResponse))

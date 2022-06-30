@@ -10,22 +10,61 @@ import (
 	"github.com/polymorph-metadata/structs"
 )
 
-const POLYMORPH_IMAGE_URL string = "https://storage.googleapis.com/polymorph-images/"
+const POLYMORPH_IMAGE_URL string = "https://storage.googleapis.com/faces-images/"
 const EXTERNAL_URL string = "https://universe.xyz/polymorphs/"
 const GENES_COUNT = 13
-const BACKGROUND_GENE_COUNT int = 5
-const HAIR_LEFT int = 33
-const HAIR_RIGHT int = 33
-const EAR_LEFT int = 33
-const EAR_RIGHT int = 33
-const BEARD_TOP_LEFT int = 33
-const BEARD_TOP_RIGHT int = 33
-const LIPS_LEFT int = 33
-const LIPS_RIGHT int = 33
-const BEARD_BOTTOM_LEFT int = 33
-const BEARD_BOTTOM_RIGHT int = 33
-const EYE_RIGHT int = 33
-const EYE_LEFT int =33
+const BACKGROUND_GENE_COUNT int = 34
+const HAIR_LEFT int = 34
+const HAIR_RIGHT int = 34
+const EAR_LEFT int = 34
+const EAR_RIGHT int = 34
+const BEARD_TOP_LEFT int = 34
+const BEARD_TOP_RIGHT int = 34
+const LIPS_LEFT int = 34
+const LIPS_RIGHT int = 34
+const BEARD_BOTTOM_LEFT int = 34
+const BEARD_BOTTOM_RIGHT int = 34
+const EYE_RIGHT int = 34
+const EYE_LEFT int = 34
+
+const BEARD_BOTTOM_RIGHT_START_IDX = -26
+const BEARD_BOTTOM_RIGHT_END_IDX = -24
+
+const BEARD_BOTTOM_LEFT_START_IDX = -24
+const BEARD_BOTTOM_LEFT_END_IDX = -22
+
+const LIPS_RIGHT_START_IDX = -22
+const LIPS_RIGHT_END_IDX = -20
+
+const LIPS_LEFT_START_IDX = -20
+const LIPS_LEFT_END_IDX = -18
+
+const BEARD_TOP_RIGHT_START_IDX = -18
+const BEARD_TOP_RIGHT_END_IDX = -16
+
+const BEARD_TOP_LEFT_START_IDX = -16
+const BEARD_TOP_LEFT_END_IDX = -14
+
+const EYE_RIGHT_START_IDX = -14
+const EYE_RIGHT_END_IDX = -12
+
+const EYE_LEFT_START_IDX = -12
+const EYE_LEFT_END_IDX = -10
+
+const EAR_RIGHT_START_IDX = -10
+const EAR_RIGHT_END_IDX = -8
+
+const EAR_LEFT_START_IDX = -8
+const EAR_LEFT_END_IDX = -6
+
+const HAIR_RIGHT_START_IDX = -6
+const HAIR_RIGHT_END_IDX = -4
+
+const HAIR_LEFT_START_IDX = -4
+const HAIR_LEFT_END_IDX = -2
+
+const BACKGROUND_GENE_START_IDX = -2
+const BACKGROUND_GENE_END_IDX = 0
 
 type Genome string
 type Gene int
@@ -60,9 +99,8 @@ func getGeneInt(g string, start, end, count int) int {
 	return gene % count
 }
 
-
 func getEyeRightGene(g string) int {
-	return getGeneInt(g, -28, -26, LIPS_RIGHT)
+	return getGeneInt(g, EYE_RIGHT_START_IDX, EYE_RIGHT_END_IDX, EYE_RIGHT)
 }
 
 func getEyeRightGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
@@ -79,7 +117,7 @@ func getEyeRightPath(g string) string {
 }
 
 func getEyeLeftGene(g string) int {
-	return getGeneInt(g, -26, -24, LIPS_LEFT)
+	return getGeneInt(g, EYE_LEFT_START_IDX, EYE_LEFT_END_IDX, EYE_LEFT)
 }
 
 func getEyeLeftGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
@@ -95,9 +133,8 @@ func getEyeLeftPath(g string) string {
 	return Gene(gene).toPath()
 }
 
-
 func getBeardBottomRightGene(g string) int {
-	return getGeneInt(g, -24, -22, BEARD_BOTTOM_RIGHT)
+	return getGeneInt(g, BEARD_BOTTOM_RIGHT_START_IDX, BEARD_BOTTOM_RIGHT_END_IDX, BEARD_BOTTOM_RIGHT)
 }
 
 func getBeardBottomRightGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
@@ -114,7 +151,7 @@ func getBeardBottomRightPath(g string) string {
 }
 
 func getBeardBottomLeftGene(g string) int {
-	return getGeneInt(g, -22, -20, BEARD_BOTTOM_LEFT)
+	return getGeneInt(g, BEARD_BOTTOM_LEFT_START_IDX, BEARD_BOTTOM_LEFT_END_IDX, BEARD_BOTTOM_LEFT)
 }
 
 func getBeardBottomLeftGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
@@ -131,7 +168,7 @@ func getBeardBottomLeftPath(g string) string {
 }
 
 func getLipsRightGene(g string) int {
-	return getGeneInt(g, -20, -18, LIPS_RIGHT)
+	return getGeneInt(g, LIPS_RIGHT_START_IDX, LIPS_RIGHT_END_IDX, LIPS_RIGHT)
 }
 
 func getLipsRightGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
@@ -148,7 +185,7 @@ func getLipsRightPath(g string) string {
 }
 
 func getLipsLeftGene(g string) int {
-	return getGeneInt(g, -18, -16, LIPS_LEFT)
+	return getGeneInt(g, LIPS_LEFT_START_IDX, LIPS_LEFT_END_IDX, LIPS_LEFT)
 }
 
 func getLipsLeftGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
@@ -164,9 +201,8 @@ func getLipsLeftPath(g string) string {
 	return Gene(gene).toPath()
 }
 
-
 func getBeardTopRightGene(g string) int {
-	return getGeneInt(g, -16, -14, BEARD_TOP_RIGHT)
+	return getGeneInt(g, BEARD_TOP_RIGHT_START_IDX, BEARD_TOP_RIGHT_END_IDX, BEARD_TOP_RIGHT)
 }
 
 func getBeardTopRightGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
@@ -183,7 +219,7 @@ func getBeardTopRightPath(g string) string {
 }
 
 func getBeardTopLeftGene(g string) int {
-	return getGeneInt(g, -14, -12, BEARD_BOTTOM_LEFT)
+	return getGeneInt(g, BEARD_TOP_LEFT_START_IDX, BEARD_TOP_LEFT_END_IDX, BEARD_TOP_LEFT)
 }
 
 func getBeardTopLeftGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
@@ -199,9 +235,8 @@ func getBeardTopLeftPath(g string) string {
 	return Gene(gene).toPath()
 }
 
-
 func getEarsRightGene(g string) int {
-	return getGeneInt(g, -12, -10, EAR_RIGHT)
+	return getGeneInt(g, EAR_RIGHT_START_IDX, EAR_RIGHT_END_IDX, EAR_RIGHT)
 }
 
 func getEarsRightGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
@@ -218,7 +253,7 @@ func getEarsRightPath(g string) string {
 }
 
 func getEarsLeftGene(g string) int {
-	return getGeneInt(g, -10, -8, EAR_LEFT)
+	return getGeneInt(g, EAR_LEFT_START_IDX, EAR_LEFT_END_IDX, EAR_LEFT)
 }
 
 func getEarsLeftGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
@@ -234,9 +269,8 @@ func getEarsLeftPath(g string) string {
 	return Gene(gene).toPath()
 }
 
-
 func getHairRightGene(g string) int {
-	return getGeneInt(g, -6, -4, HAIR_RIGHT)
+	return getGeneInt(g, HAIR_RIGHT_START_IDX, HAIR_RIGHT_END_IDX, HAIR_RIGHT)
 }
 
 func getHairRightGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
@@ -253,7 +287,7 @@ func getHairRightPath(g string) string {
 }
 
 func getHairLeftGene(g string) int {
-	return getGeneInt(g, -4, -2, HAIR_LEFT)
+	return getGeneInt(g, HAIR_LEFT_START_IDX, HAIR_LEFT_END_IDX, HAIR_LEFT)
 }
 
 func getHairLeftGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
@@ -269,16 +303,15 @@ func getHairLeftPath(g string) string {
 	return Gene(gene).toPath()
 }
 
-
 func getBackgroundGene(g string) int {
-	return getGeneInt(g, -2, 0, BACKGROUND_GENE_COUNT)
+	return getGeneInt(g, BACKGROUND_GENE_START_IDX, BACKGROUND_GENE_END_IDX, BACKGROUND_GENE_COUNT)
 }
 
 func getBackgroundGeneAttribute(g string, configService *config.ConfigService) StringAttribute {
 	gene := getBackgroundGene(g)
 	return StringAttribute{
 		TraitType: "Background",
-		Value:     configService.Background[gene],
+		Value:     configService.Traits[gene],
 	}
 }
 
@@ -286,7 +319,6 @@ func getBackgroundGenePath(g string) string {
 	gene := getBackgroundGene(g)
 	return Gene(gene).toPath()
 }
-
 
 func (g *Genome) name(configService *config.ConfigService, tokenId string) string {
 	return fmt.Sprintf("Polymorphic Face #%v", tokenId)
@@ -296,7 +328,6 @@ func (g *Genome) description(configService *config.ConfigService, tokenId string
 	return fmt.Sprintf("Polymorphic Face Description")
 }
 
-
 // const BASE_GENES_COUNT int = 11
 // const SHOES_GENES_COUNT int = 25
 // const PANTS_GENES_COUNT int = 33
@@ -305,7 +336,6 @@ func (g *Genome) description(configService *config.ConfigService, tokenId string
 // const HEAD_GENES_COUNT int = 31
 // const WEAPON_RIGHT_GENES_COUNT int = 32
 // const WEAPON_LEFT_GENES_COUNT int = 32
-
 
 // const HAIR_LEFT int = 33
 // const HAIR_RIGHT int = 33

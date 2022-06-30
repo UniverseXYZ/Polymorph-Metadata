@@ -14,8 +14,8 @@ import (
 )
 
 const IMG_SIZE = 3000
-const GCLOUD_UPLOAD_BUCKET_NAME = "polymorph-faces-images"
-const GCLOUD_SOURCE_BUCKET_NAME = "polymorph-faces-source-images"
+const GCLOUD_UPLOAD_BUCKET_NAME = "faces-images"
+const GCLOUD_SOURCE_BUCKET_NAME = "faces-source"
 
 func imageExists(imageURL string) bool {
 	resp, err := http.Get(imageURL)
