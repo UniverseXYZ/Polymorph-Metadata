@@ -1,28 +1,37 @@
-# Polymorph
+# Polymorphic Faces
 ## Overview
-See general overview here: [https://github.com/LimeChain/Polymorph-Contracts/](https://github.com/LimeChain/Polymorph-Contracts/)
+- This branch is based on master's Polymorphs but is modified for Polymorphic Faces metadata
+- Overview of contracts: [https://github.com/UniverseXYZ/Polymorphic-Faces-Contracts/](https://github.com/UniverseXYZ/Polymorphic-Faces-Contracts/)
 ## Genes interpretation
 Each gene is 2 numbers read from right to left. Interpret follows:
-- Gene 1 [0:2] - base character. Will not be morphable 
-- Gene 2 [2:4] - background attribute
-- Gene 3 [4:6] - pants attribute
-- Gene 4 [6:8] - torso attribute
-- Gene 5 [8:10] - shoes attribute
-- Gene 6 [10:12] - face attribute
-- Gene 7 [12:14] - head attribute
-- Gene 8 [14:16] - right weapon attribute
-- Gene 9 [16:18] - left weapon attribute
+- Gene 1 [0:2] - Background attribute. 
+- Gene 2 [2:4] - Hair Left attribute
+- Gene 3 [4:6] - Hair Right attribute
+- Gene 4 [6:8] - Ear Left attribute
+- Gene 5 [8:10] - Ear Right attribute
+- Gene 6 [10:12] - Eye Left attribute
+- Gene 7 [12:14] - Eye Right attribute
+- Gene 8 [14:16] - Beard Top Left attribute
+- Gene 9 [16:18] - Beard Top Right attribute
+- Gene 10 [18:20] - Lips Left attribute
+- Gene 11 [20:22] - Lips Right attribute
+- Gene 12 [22:24] - Beard Bottom Left attribute
+- Gene 13 [24:26] - Beard Bottom Right attribute
 
 ## Genes and their variations
 ```
-const GENES_COUNT = 9
-const BACKGROUND_GENE_COUNT int = 12
-const BASE_GENES_COUNT int = 11
-const SHOES_GENES_COUNT int = 25
-const PANTS_GENES_COUNT int = 33
-const TORSO_GENES_COUNT int = 34
-const EYEWEAR_GENES_COUNT int = 13
-const HEAD_GENES_COUNT int = 32
-const WEAPON_RIGHT_GENES_COUNT int = 32
-const WEAPON_LEFT_GENES_COUNT int = 32
+const GENES_COUNT = 13
+const BACKGROUND_GENE_COUNT int = 34
+const HAIR_LEFT int = 34
+const HAIR_RIGHT int = 34
+const EAR_LEFT int = 34
+const EAR_RIGHT int = 34
+const BEARD_TOP_LEFT int = 34
+const BEARD_TOP_RIGHT int = 34
+const LIPS_LEFT int = 34
+const LIPS_RIGHT int = 34
+const BEARD_BOTTOM_LEFT int = 34
+const BEARD_BOTTOM_RIGHT int = 34
+const EYE_RIGHT int = 34
+const EYE_LEFT int = 34
 ```
