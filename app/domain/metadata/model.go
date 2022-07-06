@@ -354,15 +354,14 @@ func (g *Genome) genes() []string {
 	gStr := string(*g)
 
 	res := make([]string, 0, GENES_COUNT)
-
-	res = append(res, getEyeRightPath(gStr))
-	res = append(res, getEyeLeftPath(gStr))
 	res = append(res, getBeardBottomRightPath(gStr))
 	res = append(res, getBeardBottomLeftPath(gStr))
 	res = append(res, getLipsRightPath(gStr))
 	res = append(res, getLipsLeftPath(gStr))
 	res = append(res, getBeardTopRightPath(gStr))
 	res = append(res, getBeardTopLeftPath(gStr))
+	res = append(res, getEyeRightPath(gStr))
+	res = append(res, getEyeLeftPath(gStr))
 	res = append(res, getEarsRightPath(gStr))
 	res = append(res, getEarsLeftPath(gStr))
 	res = append(res, getHairRightPath(gStr))
@@ -392,14 +391,14 @@ func (g *Genome) attributes(configService *config.ConfigService, rarityResponse 
 
 	res := []interface{}{}
 
-	res = append(res, getEyeRightGeneAttribute(gStr, configService))
-	res = append(res, getEyeLeftGeneAttribute(gStr, configService))
 	res = append(res, getBeardBottomRightGeneAttribute(gStr, configService))
 	res = append(res, getBeardBottomLeftGeneAttribute(gStr, configService))
 	res = append(res, getLipsRightGeneAttribute(gStr, configService))
 	res = append(res, getLipsLeftGeneAttribute(gStr, configService))
 	res = append(res, getBeardTopRightGeneAttribute(gStr, configService))
 	res = append(res, getBeardTopLeftGeneAttribute(gStr, configService))
+	res = append(res, getEyeRightGeneAttribute(gStr, configService))
+	res = append(res, getEyeLeftGeneAttribute(gStr, configService))
 	res = append(res, getEarsRightGeneAttribute(gStr, configService))
 	res = append(res, getEarsLeftGeneAttribute(gStr, configService))
 	res = append(res, getHairRightGeneAttribute(gStr, configService))

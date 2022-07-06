@@ -19,7 +19,7 @@ import (
 func HandleMetadataRequest(ethClient *ethereum.EthereumClient, address string, configService *config.ConfigService) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		instance, err := contracts.NewPolymorph(common.HexToAddress(address), ethClient.Client)
+		instance, err := contracts.NewPolymorphicFacesRoot(common.HexToAddress(address), ethClient.Client)
 		if err != nil {
 			render.Status(r, 500)
 			render.JSON(w, r, err)
